@@ -1,51 +1,48 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Docs on Template-Hugo</title>
-    <link>https://hello-world-example.github.io/Template-Hugo/docs/</link>
-    <description>Recent content in Docs on Template-Hugo</description>
+    <title>Docs on Reactor</title>
+    <link>https://hello-world-example.github.io/Reactor/docs/</link>
+    <description>Recent content in Docs on Reactor</description>
     <generator>Hugo -- gohugo.io</generator>
     
-	<atom:link href="https://hello-world-example.github.io/Template-Hugo/docs/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://hello-world-example.github.io/Reactor/docs/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title></title>
-      <link>https://hello-world-example.github.io/Template-Hugo/docs/hidden/</link>
+      <link>https://hello-world-example.github.io/Reactor/docs/CompletableFuture/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>https://hello-world-example.github.io/Template-Hugo/docs/hidden/</guid>
-      <description>This page is hidden in menu Quondam non pater est dignior ille Eurotas Latent te facies Lorem markdownum arma ignoscas vocavit quoque ille texit mandata mentis ultimus, frementes, qui in vel. Hippotades Peleus pennas conscia cuiquam Caeneus quas.
- Pater demittere evincitque reddunt Maxime adhuc pressit huc Danaas quid freta Soror ego Luctus linguam saxa ultroque prior Tatiumque inquit Saepe liquitur subita superata dederat Anius sudor  Cum honorum Latona O fallor in sustinui iussorum equidem.</description>
+      <guid>https://hello-world-example.github.io/Reactor/docs/CompletableFuture/</guid>
+      <description></description>
     </item>
     
     <item>
       <title></title>
-      <link>https://hello-world-example.github.io/Template-Hugo/docs/shortcodes/</link>
+      <link>https://hello-world-example.github.io/Reactor/docs/Diff/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>https://hello-world-example.github.io/Template-Hugo/docs/shortcodes/</guid>
-      <description>各种样式 折叠 Default {{&amp;lt; expand &amp;gt;}} ## Markdown content Lorem markdownum insigne... {{&amp;lt; /expand &amp;gt;}}  Expand ↕  Markdown content Lorem markdownum insigne&amp;hellip;    With Custom Label {{&amp;lt; expand &amp;#34;Custom Label&amp;#34; &amp;#34;...&amp;#34; &amp;gt;}} ## Markdown content Lorem markdownum insigne... {{&amp;lt; /expand &amp;gt;}}  Custom Label ...  Markdown content Lorem markdownum insigne. Olympo signis Delphis! Retexi Nereius nova develat stringit, frustra Saturnius uteroque inter! Oculis non ritibus Telethusa protulit, sed sed aere valvis inhaesuro Pallas animam: qui quid, ignes.</description>
+      <guid>https://hello-world-example.github.io/Reactor/docs/Diff/</guid>
+      <description> 傻傻分不清 概念  React： Facebook 开源的前端开发框架，与响应式编程没有关系，与后端没有关系
+ Reactive：响应式的； 大多数场景里用来描述响应式编程（Reactive Programming）
+ Reactive Streams： 响应式编程规范 http://www.reactive-streams.org/ ，已纳入JDK9
+ Reactor： 响应式编程的一种实现，Spring5 采用，遵循Reactive Streams规范
+ RxJava：响应式编程的一种实现，Android 采用较多，遵循Reactive Streams规范
+ ReactiveX：简称 Rx，是一个编程模型，也是一个组织（http://reactivex.io/），下面有 RxJava/RxJS/Rx.NET 等项目
+  对比  八个层面比较 Java 8, RxJava, Reactor Netflix RxJava vs Spring Reactor  Use Reactor 3 if you are allowed to use Java 8+ use RxJava 2 if you are stuck on Java 6+ or need your functions to throw checked exceptions  RxJava vs Reactor  </description>
     </item>
     
     <item>
       <title></title>
-      <link>https://hello-world-example.github.io/Template-Hugo/docs/with-toc/</link>
+      <link>https://hello-world-example.github.io/Reactor/docs/Reactive-Streams/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>https://hello-world-example.github.io/Template-Hugo/docs/with-toc/</guid>
-      <description>默认带导航 Cognita laeva illo fracta Lorem markdownum pavent auras, surgit nunc cingentibus libet Laomedonque que est. Pastor An arbor filia foedat, ne fugit aliter, per. Helicona illas et callida neptem est Oresitrophos caput, dentibus est venit. Tenet reddite famuli praesentem fortibus, quaeque vis foret si frondes gelidos gravidae circumtulit inpulit armenta nativum.
- Te at cruciabere vides rubentis manebo Maturuit in praetemptat ruborem ignara postquam habitasse Subitarum supplevit quoque fontesque venabula spretis modo Montis tot est mali quasque gravis Quinquennem domus arsit ipse Pellem turis pugnabant locavit  Natus quaerere Pectora et sine mulcere, coniuge dum tincta incurvae.</description>
-    </item>
-    
-    <item>
-      <title></title>
-      <link>https://hello-world-example.github.io/Template-Hugo/docs/without-toc/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>https://hello-world-example.github.io/Template-Hugo/docs/without-toc/</guid>
-      <description>不使用导航 Tanto oblite Lorem markdownum pectora novis patenti igne sua opus aurae feras materiaque illic demersit imago et aristas questaque posset. Vomit quoque suo inhaesuro clara. Esse cumque, per referri triste. Ut exponit solisque communis in tendens vincetis agisque iamque huic bene ante vetat omina Thebae rates. Aeacus servat admonitu concidit, ad resimas vultus et rugas vultu dignamque Siphnon.
-Quam iugulum regia simulacra, plus meruit humo pecorumque haesit, ab discedunt dixit: ritu pharetramque.</description>
+      <guid>https://hello-world-example.github.io/Reactor/docs/Reactive-Streams/</guid>
+      <description>Reactive Streams 规范   [英文原文] Reactive Streams [译文原文] JVM平台上的响应式流（Reactive Streams）规范   Reactive Streams 的目的是为 非阻塞背压(backpressure) 的 异步流处理提供标准。目前已被纳入 JDK9。
+ The purpose of Reactive Streams is to provide a standard for asynchronous stream processing with non-blocking backpressure.
+ 最新版本：
+&amp;lt;dependency&amp;gt; &amp;lt;groupId&amp;gt;org.reactivestreams&amp;lt;/groupId&amp;gt; &amp;lt;artifactId&amp;gt;reactive-streams&amp;lt;/artifactId&amp;gt; &amp;lt;version&amp;gt;1.0.3&amp;lt;/version&amp;gt; &amp;lt;/dependency&amp;gt; &amp;lt;!-- 工具包， 包含 测试、示例 等， 保证针对该规范的实现效果是一致的 --&amp;gt; &amp;lt;dependency&amp;gt; &amp;lt;groupId&amp;gt;org.reactivestreams&amp;lt;/groupId&amp;gt; &amp;lt;artifactId&amp;gt;reactive-streams-tck&amp;lt;/artifactId&amp;gt; &amp;lt;version&amp;gt;1.0.3&amp;lt;/version&amp;gt; &amp;lt;scope&amp;gt;test&amp;lt;/scope&amp;gt; &amp;lt;/dependency&amp;gt; Goals, Design and Scope 处理流数据，尤其是 数据量无法预知的实时在线数据，在一个异步系统中要求格外小心。最需要关注的问题是资源的消耗需要被小心地控制，避免数据流过快压垮下游服务 ( a fast data source does not overwhelm the stream destination)。异步是必要的，目的是为了并行地使用计算资源，如协调网络上多个主机，或一个机器的多个CPU核。</description>
     </item>
     
   </channel>
