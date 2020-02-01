@@ -35,7 +35,7 @@ Reactive Streams 的目的是为 非阻塞背压(backpressure) 的 异步流处�
 
 
 
-响应式流的主要目标是控制横穿一个异步边界的流数据的交换。考虑到向另一个线程或线程池传递元素，同时确保接收端不被强迫缓冲任意数量的数据。换句话说，后压是这个模型的一个必须部分，目的是允许队列在被界定的线程之间进行调节（斡旋）。如果后压信号是同步的，异步处理的好处将被否定，因此对一个响应式流实现的所有方面的完全非阻塞和异步行为的授权需要小心一些。
+响应式流的主要目标是控制横穿一个异步边界的流数据的交换。考虑到向另一个线程或线程池传递元素，同时确保接收端不被强迫缓冲任意数量的数据。换句话说，后压是这个模型的一个必须部分，目的是允许队列在被界定的线程之间进行调节。如果后压信号是同步的，异步处理的好处将被否定，因此对一个响应式流实现的所有方面的完全非阻塞和异步行为的授权需要小心一些。
 
 
 
@@ -43,16 +43,16 @@ Reactive Streams 的目的是为 非阻塞背压(backpressure) 的 异步流处�
 
 
 
-需要注意的是流操作的精确特性（转化，分割，合并等）并没有被这个规范包括。响应式流只关心在不同的API组件间调节流数据。在他们的开发中，已经非常细心地确保所有组合流的基本方式都能够被表达。
+需要注意的是流操作的精确特性（转化，分割，合并等）并没有被这个规范包括。**响应式流只关心在不同的 API 组件间调节流数据**。在他们的开发中，已经非常细心地确保所有组合流的基本方式都能够被表达。
 
 
 
 总之，响应式流是 JVM 上面向流的库的一个标准和规范：
 
-- 处理一个潜在的无限数目元素，
-- 依次地，
-- 异步地在组件间传递元素，
-- 带有强制的非阻塞后压。
+- 依次地
+- 处理一个潜在的无限数目元素
+- 异步地在组件间传递元素
+- 带有强制的非阻塞后压
 
 
 响应式流规范由以下部分组成：
@@ -69,10 +69,10 @@ Reactive Streams 的目的是为 非阻塞背压(backpressure) 的 异步流处�
 
 API由以下组件组成，响应式流的实现必须提供它们：
 
-1. Publisher，发布者（生产者）
-2. Subscriber，订阅者（消费者）
-3. Subscription，订阅
-4. Processor，处理者
+1. `Publisher` 发布者（生产者）
+2. `Subscriber`，订阅者（消费者）
+3. `Subscription` 订阅
+4. `Processor` 处理者
 
 
 
@@ -104,7 +104,7 @@ public interface Processor<T, R> extends Subscriber<T>, Publisher<R> {
 对 `Publisher.subscribe(Subscriber)` 方法调用的响应，对于订阅者上的方法的可能调用顺序按下面的协议给出：
 
 ```java
-onSubscribe onNext* (onError | onComplete)?
+onSubscribe | onNext | onError | onComplete
 ```
 
 
@@ -118,17 +118,17 @@ onSubscribe onNext* (onError | onComplete)?
 
 
 |名词|释义|
-|----|----|
-|Signal|作为一个名词，指的是这些方法onSubscribe，onNext，onComplete，onError，request(n)或cancel中的一个。<br />作为一个动词，指的是调用这些方法中的一个。<br />表面上可以理解为发信号进行通知，本质上也是通过方法调用来实现的。|
-|Demand|作为一个名词，指的是一个订阅者（向发布者）请求的一定数量的元素，它还没有被发布者分发。<br />作为一个动词，指的是请求更多元素的行为动作。<br />可以看作是订阅者向发布者发出的需求/动作，想要获取更多的元素。发布者暂时还没有回应。|
-|Synchronous(ly)|本义是同步的。指的是在调用线程上执行（没有新开线程）。|
-|Return normally|本义是正常返回。指的是仅返回已声明过的类型的值给调用者。如果想发送一个失败给订阅者，唯一合法的方式是通过onError（回调）方法。|
-|Responsivity|本义是响应度。指的是已准备就绪有能力来做出响应。在这个文档里用来指示不同的组件不应该互相削弱响应的能力。|
-|Non-obstructing（堵塞）|本义是非堵塞。指的是描述一个方法的质量（品质），即在调用线程上尽可能快地执行完。这意味着，例如，避免重的计算和其它将拖住调用者线程执行的事情（因为没有新开线程）。|
-|Terminal state|本义是终止状态。对于一个发布者，指的是当onComplete或者onError已经被调用。对于一个订阅者，指的是当一个onComplete或onError（回调方法）已经收到。|
-|NOP|指的是执行对于调用线程来说没有可检测到的影响，能够像这样安全地被调用任意次。|
-|External synchronization|本义是外部同步。为了线程安全的目的，协调访问在这个规范里定义的结构之外被实现，使用的技术像但不限于atomics，monitors或locks。|
-|Thread-safe|能够安全地被同步或异步调用，不需要外部的同步来确保程序的正确性。|
+|:--:|----|
+|`Signal`<br />信号|作为一个名词，指 `onSubscribe`，`onNext`，`onComplete`，`onError`，`request(n) `或 `cancel` 中的一个 <br />作为一个动词，指 calling/invoking 这些方法|
+|`Demand`<br />需求|作为一个名词，指的是一个订阅者（向发布者）请求的一定数量的元素，它还没有被发布者分发<br />作为一个动词，指的是请求更多元素的行为动作<br />可以看作是**订阅者向发布者发出的需求/动作，想要获取更多的元素，发布者暂时还没有回应**|
+|`Synchronous(ly)`|在调用线程上执行，没有新开线程|
+|`Return normally`<br />正常返回|仅返回已声明过的类型的值给调用者。如果想发送一个失败给订阅者，唯一合法的方式是通过 `onError`回调方法。|
+|`Responsivity`<br />响应度|已准备就绪有能力来做出响应。在这个文档里用来指示不同的组件不应该互相削弱响应的能力|
+|`Non-obstructing`<br />无障碍|描述一个方法的质量（品质），即在调用线程上尽可能快地执行完。这意味着，例如，避免重的计算和其它将拖住调用者线程执行的事情（因为没有新开线程）。|
+|`Terminal state`<br />终止状态|本义是终止状态。对于一个发布者，指的是当onComplete或者onError已经被调用。对于一个订阅者，指的是当一个onComplete或onError（回调方法）已经收到。|
+|`NOP`<br />|执行对于调用线程来说没有影响，能够安全地被调用任意次|
+|`Serial(ly)`|本义是外部同步。为了线程安全的目的，协调访问在这个规范里定义的结构之外被实现，使用的技术像但不限于atomics，monitors或locks。|
+|`Thread-safe`|能够安全地被同步或异步调用，不需要外部的同步来确保程序的正确性|
 
 
 
@@ -146,33 +146,21 @@ public interface Publisher<T> {
 
 
 
-1、一个发布者对一个订阅者的onNext调用总次数必须总是小于或等于订阅者的Subscription请求的元素总数。
-
-2、一个发布者可能调用的onNext次数比要求的少，然后通过调用onComplete或onError来终止Subscription。
-
-3、对一个订阅者的onSubscribe，onNext，onError和onComplete调用必须以一个线程安全的方式进行，如果被多个线程执行，使用external synchronization。
-
-4、如果一个发布者失败，它必须调用一个onError。
-
-5、如果一个发布者成功地终止（对于有限流），它必须调用一个onComplete。
-
-6、如果一个发布者调用一个订阅者上的onError或onComplete方法，那个订阅者的Subscription必须认为已被取消。
-
-7、一旦一个terminal state已经被调用（onError，onComplete），它要求没有进一步的调用发生。
-
-8、如果一个订阅被取消，它的订阅者必须最终停止被调用。
-
-9、发布者的subscribe方法里必须在早于对订阅者上的任何方法调用之前先调用onSubscribe方法，且必须return normally。当订阅者是null的时候，此时必须向调用者抛出java.lang.NullPointerException异常。对于其它任何情况，通知失败（或拒绝订阅者）的唯一合法方式是调用onError。
-
-10、发布者的subscribe方法可能被调用任意多次，但是每次必须使用一个不同的订阅者。
-
-11、一个发布者可以支持多个订阅者，并决定每一个订阅是单播或多播。
+1. 一个发布者对一个订阅者的onNext调用总次数必须总是小于或等于订阅者的Subscription请求的元素总数
+2. 一个发布者可能调用的onNext次数比要求的少，然后通过调用onComplete或onError来终止Subscription
+3. 给 `Subscriber` 的 `onSubscribe`、`onNext`、`onError` 和 `onComplete` 信号必须串行
+4. 如果一个发布者失败，它必须调用一个onError
+5. 如果一个发布者成功地终止（对于有限流），它必须调用一个onComplete
+6. 如果一个发布者调用一个订阅者上的onError或onComplete方法，那个订阅者的Subscription必须认为已被取消
+7. 一旦一个terminal state已经被调用（onError，onComplete），它要求没有进一步的调用发生
+8. 如果一个订阅被取消，它的订阅者必须最终停止被调用
+9. 发布者的subscribe方法里必须在早于对订阅者上的任何方法调用之前先调用onSubscribe方法，且必须return normally。当订阅者是null的时候，此时必须向调用者抛出java.lang.NullPointerException异常。对于其它任何情况，通知失败（或拒绝订阅者）的唯一合法方式是调用onError
+10. 发布者的subscribe方法可能被调用任意多次，但是每次必须使用一个不同的订阅者
+11. 一个发布者可以支持多个订阅者，并决定每一个订阅是单播或多播。
 
 ### Subscriber
 
-
-
-```
+```java
 public interface Subscriber<T> {
 
     public void onSubscribe(Subscription s);
@@ -216,19 +204,12 @@ public interface Subscriber<T> {
 
 ### Subscription
 
-
-
-```
+```java
 public interface Subscription {
-
     public void request(long n);
-
     public void cancel();
-
 }
 ```
-
-
 
 
 
@@ -272,11 +253,8 @@ public interface Subscription {
 
 
 
-```
+```java
 public interface Processor<T, R> extends Subscriber<T>, Publisher<R> {
-
-
-
 }
 ```
 
@@ -292,7 +270,7 @@ public interface Processor<T, R> extends Subscriber<T>, Publisher<R> {
 
 ## Asynchronous vs Synchronous Processing
 
-响应式流API要求所有的元素处理（onNext调用）或终止调用（onError，onComplete）禁止阻塞发布者。然而，每一个on*（以on开头的方法）处理器可以同步地处理事件，也可以异步地处理。
+响应式流 API 要求所有的元素处理（onNext调用）或终止调用（onError，onComplete）禁止阻塞发布者。然而，每一个on*（以on开头的方法）处理器可以同步地处理事件，也可以异步地处理。
 
 看下面这个示例：
 
@@ -300,17 +278,17 @@ public interface Processor<T, R> extends Subscriber<T>, Publisher<R> {
 nioSelectorThreadOrigin map(f) filter(p) consumeTo(toNioSelectorOutput)
 ```
 
+它有一个异步的来源和异步的目的地。让我们假设来源和目的地都是 selector 事件循环。
 
-它有一个异步的来源和异步的目的地。让我们假设来源和目的地都是selector事件循环。Subscription.request(n)必须是一个链接从目的地到来源。这就是现在每一个实现都能选择如何做这些的地方。
+Subscription.request(n) 必须是一个链接从目的地到来源。这就是现在每一个实现都能选择如何做这些的地方。
 
 
 下面使用管道操作符（|）来调用异步边界（队列和调度器），R#表示资源（可能是线程）。
 
 
 
-```
+```bash
 nioSelectorThreadOrigin | map(f) | filter(p) | consumeTo(toNioSelectorOutput)
-
 -------------- R1 ----  | - R2 - | -- R3 --- | ---------- R4 ----------------
 ```
 
@@ -322,9 +300,8 @@ nioSelectorThreadOrigin | map(f) | filter(p) | consumeTo(toNioSelectorOutput)
 
 
 
-```
+```bash
 nioSelectorThreadOrigin map(f) filter(p) | consumeTo(toNioSelectorOutput)
-
 ------------------- R1 ----------------- | ---------- R2 ----------------
 ```
 
@@ -338,9 +315,8 @@ nioSelectorThreadOrigin map(f) filter(p) | consumeTo(toNioSelectorOutput)
 
 
 
-```
+```bash
 nioSelectorThreadOrigin | map(f) filter(p) consumeTo(toNioSelectorOutput)
-
 --------- R1 ---------- | ------------------ R2 -------------------------
 ```
 
@@ -356,11 +332,13 @@ nioSelectorThreadOrigin | map(f) filter(p) consumeTo(toNioSelectorOutput)
 
 ## Subscriber controlled queue bounds
 
+其中一个底层设计原则是，所有缓冲区大小都是有界的，这些界限必须是知道的，且由订阅者控制。这些界限用元素数目（它依次转化为 onNext 的调用次数）这样的术语来表达。任何实现的目标都是为了支持无限流（尤其是高输出速率流），一般需要强迫界限都沿着避免 OOM 错误和限制资源使用的方式。
 
 
-其中一个底层设计原则是，所有缓冲区大小都是有界的，这些界限必须是知道的，且由订阅者控制。这些界限用元素数目（它依次转化为onNext的调用次数）这样的术语来表达。任何实现的目标都是为了支持无限流（尤其是高输出速率流），一般需要强迫界限都沿着避免OOM错误和限制资源使用的方式。
 
 因为后压是强制的，使用无界缓冲区能够被避免。一般来说，只有在当一个队列可能无界增长时，此时也是发布者端比订阅者端保持一个更高的速率，且持续了一段较大的时间，但是这种情形是被后压来处理的。
+
+
 
 队列界限能够被控制通过一个订阅者为了适合数目的元素而调用需求。在任何时候订阅者都知道：
 
@@ -369,7 +347,11 @@ nioSelectorThreadOrigin | map(f) filter(p) consumeTo(toNioSelectorOutput)
 
 然后最大数量的元素可能达到是P - N，直到更多的需求被发送通知给发布者。这种情况下，订阅者也知道在它的输入缓冲区里的元素数目B，然后这个界限可以被重新精确为P - B - N。
 
+
+
 这些界限必须被一个发布者尊重，独立于无论它表示的源是能够被后压的或不能。在这种源的生产速率不能被影响的情形下，例如钟表的滴滴答答或鼠标的移动，发布者必须选择要么缓冲元素或抛弃元素来遵守这个强加的界限。
+
+
 
 订阅者在接收一个元素后发一个请求获取另一个元素，可以有效地实现一个停止和等待协议，这里这个需求信号和一个ACK（回应）相等。通过提需求的方式获取多个元素，ACK花销是分期偿还的。
 
