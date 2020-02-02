@@ -4,7 +4,7 @@
   
   <url>
     <loc>https://hello-world-example.github.io/Reactor/_sidebar/</loc>
-    <lastmod>2020-01-12T22:53:11+08:00</lastmod>
+    <lastmod>2020-02-01T19:02:41+08:00</lastmod>
   </url>
   
   <url>
@@ -23,12 +23,22 @@
   </url>
   
   <url>
+    <loc>https://hello-world-example.github.io/Reactor/docs/Reactor/Operator/</loc>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://hello-world-example.github.io/Reactor/docs/Reactor/Schedulers/</loc>
+    <priority>0</priority>
+  </url>
+  
+  <url>
     <loc>https://hello-world-example.github.io/Reactor/docs/</loc>
   </url>
   
   <url>
     <loc>https://hello-world-example.github.io/Reactor/</loc>
-    <lastmod>2020-01-12T22:53:11+08:00</lastmod>
+    <lastmod>2020-02-01T19:02:41+08:00</lastmod>
   </url>
   
 </urlset>

@@ -45,5 +45,25 @@
 &amp;lt;dependency&amp;gt; &amp;lt;groupId&amp;gt;org.reactivestreams&amp;lt;/groupId&amp;gt; &amp;lt;artifactId&amp;gt;reactive-streams&amp;lt;/artifactId&amp;gt; &amp;lt;version&amp;gt;1.0.3&amp;lt;/version&amp;gt; &amp;lt;/dependency&amp;gt; &amp;lt;!-- 工具包， 包含 测试、示例 等， 保证针对该规范的实现效果是一致的 --&amp;gt; &amp;lt;dependency&amp;gt; &amp;lt;groupId&amp;gt;org.reactivestreams&amp;lt;/groupId&amp;gt; &amp;lt;artifactId&amp;gt;reactive-streams-tck&amp;lt;/artifactId&amp;gt; &amp;lt;version&amp;gt;1.0.3&amp;lt;/version&amp;gt; &amp;lt;scope&amp;gt;test&amp;lt;/scope&amp;gt; &amp;lt;/dependency&amp;gt; Goals, Design and Scope 处理流数据，尤其是 数据量无法预知的实时在线数据，在一个异步系统中要求格外小心。最需要关注的问题是资源的消耗需要被小心地控制，避免数据流过快压垮下游服务 ( a fast data source does not overwhelm the stream destination)。异步是必要的，目的是为了并行地使用计算资源，如协调网络上多个主机，或一个机器的多个CPU核。</description>
     </item>
     
+    <item>
+      <title></title>
+      <link>https://hello-world-example.github.io/Reactor/docs/Reactor/Operator/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://hello-world-example.github.io/Reactor/docs/Reactor/Operator/</guid>
+      <description>操作符  reactor.core.publisher.Flux API 文档
+ Static Methods just / fromArray / range / interval Flux.just(1, 2, 3).subscribe(System.out::println); // Flux.just 内部调用 Flux.fromArray Flux.fromArray(new Integer[]{1, 2, 3, 4}).subscribe(System.out::println); // 参数(int start, int count), // 这里生成 1 ~ 10 十个数字 Flux.range(1, 10).subscribe(System.out::println); // 每秒生成一个数字，从 0 开始 Flux.interval(Duration.ofSeconds(1)).subscribe(System.out::println); empty / never / error final CoreSubscriber&amp;lt;Object&amp;gt; coreSubscriber = new CoreSubscriber&amp;lt;Object&amp;gt;() { @Override public void onSubscribe(Subscription s) { System.out.println(s.getClass()); } @Override public void onNext(Object o) { System.</description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>https://hello-world-example.github.io/Reactor/docs/Reactor/Schedulers/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://hello-world-example.github.io/Reactor/docs/Reactor/Schedulers/</guid>
+      <description> 线程调度  reactor.core.scheduler.Schedulers API 文档
+  Schedulers.immediate() - 使用当前线程 Schedulers.elastic() - 使用线程池 Schedulers.single() - 单个线程 Schedulers.parallel() - 使用并行处理的线程池（取决于CPU核数) Schedulers.fromExecutorService(Executors.newScheduledThreadPool(5)) - 使用Executor（这个最灵活)  </description>
+    </item>
+    
   </channel>
 </rss>

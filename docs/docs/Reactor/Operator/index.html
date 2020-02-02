@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Operator | Reactor</title>
+
+
+<link rel="stylesheet" href="/Reactor/book.min.80ce348dabc24f4b988624dd4986625a0cf59ecb530e87b4192da6306e047f04.css">
+
+
+
+
+<link rel="icon" href="/Reactor/favicon.png" type="image/x-icon">
+
+
+<!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+
+  
+</head>
+
+<body>
+  <input type="checkbox" style="display: none" id="menu-control" />
+  <main class="flex container">
+
+    <aside class="book-menu fixed">
+      <nav>
+<h2 class="book-brand">
+  <a href="https://hello-world-example.github.io/Reactor/">Reactor</a>
+</h2>
+
+
+
+
+
+
+    
+  
+  
+  
+
+  <style>
+  nav ul a[href$="\2fReactor\2f docs\2fReactor\2fOperator\2f "] {
+      color: #004ed0;
+  }
+  </style>
+
+<ul>
+<li><a href="/Reactor/docs/Diff/">傻傻分不清</a></li>
+<li><a href="/Reactor/docs/Reactive-Streams/">Reactive Streams 规范</a></li>
+<li>CompletableFuture</li>
+<li><strong>Reactor</strong>
+
+<ul>
+<li><a href="/Reactor/docs/Reactor/Operator/">操作符</a></li>
+<li><a href="/Reactor/docs/Reactor/Schedulers/">线程调度</a></li>
+</ul></li>
+<li></li>
+</ul>
+
+
+
+
+
+
+
+</nav>
+
+
+<script>
+(function() {
+  var menu = document.querySelector("aside.book-menu nav");
+  addEventListener("beforeunload", function(event) {
+    localStorage.setItem("menu.scrollTop", menu.scrollTop);
+  });
+  menu.scrollTop = localStorage.getItem("menu.scrollTop");
+})();
+</script>
+
+    </aside>
+
+    <div class="book-page">
+      <header class="flex align-center justify-between book-header">
+  <label for="menu-control">
+    <img src="/Reactor/svg/menu.svg" alt="Menu" />
+  </label>
+  <strong>Operator</strong>
+</header>
+
+      
+<article class="markdown">
+
+<h1 id="操作符">操作符</h1>
+
+<blockquote>
+<p>reactor.core.publisher.Flux <a href="https://projectreactor.io/docs/core/release/api/reactor/core/publisher/Flux.html">API 文档</a></p>
+</blockquote>
+
+<h2 id="static-methods">Static Methods</h2>
+
+<h3 id="just-fromarray-range-interval">just / fromArray / range / interval</h3>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">Flux.<span style="color:#a6e22e">just</span>(1, 2, 3).<span style="color:#a6e22e">subscribe</span>(System.<span style="color:#a6e22e">out</span><span style="color:#f92672">::</span>println);
+
+<span style="color:#75715e">// Flux.just 内部调用 Flux.fromArray
+</span><span style="color:#75715e"></span>Flux.<span style="color:#a6e22e">fromArray</span>(<span style="color:#66d9ef">new</span> Integer[]{1, 2, 3, 4}).<span style="color:#a6e22e">subscribe</span>(System.<span style="color:#a6e22e">out</span><span style="color:#f92672">::</span>println);
+
+<span style="color:#75715e">// 参数(int start, int count),
+</span><span style="color:#75715e">// 这里生成 1 ~ 10 十个数字
+</span><span style="color:#75715e"></span>Flux.<span style="color:#a6e22e">range</span>(1, 10).<span style="color:#a6e22e">subscribe</span>(System.<span style="color:#a6e22e">out</span><span style="color:#f92672">::</span>println);
+
+<span style="color:#75715e">// 每秒生成一个数字，从 0 开始
+</span><span style="color:#75715e"></span>Flux.<span style="color:#a6e22e">interval</span>(Duration.<span style="color:#a6e22e">ofSeconds</span>(1)).<span style="color:#a6e22e">subscribe</span>(System.<span style="color:#a6e22e">out</span><span style="color:#f92672">::</span>println);</code></pre></div>
+<h3 id="empty-never-error">empty / never / error</h3>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">final</span> <span style="color:#a6e22e">CoreSubscriber</span><span style="color:#f92672">&lt;</span>Object<span style="color:#f92672">&gt;</span> <span style="color:#a6e22e">coreSubscriber</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> CoreSubscriber<span style="color:#f92672">&lt;</span>Object<span style="color:#f92672">&gt;</span>() {
+    <span style="color:#a6e22e">@Override</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#a6e22e">void</span> onSubscribe(Subscription <span style="color:#a6e22e">s</span>) {
+        System.<span style="color:#a6e22e">out</span>.<span style="color:#a6e22e">println</span>(s.<span style="color:#a6e22e">getClass</span>());
+    }
+  
+    <span style="color:#a6e22e">@Override</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#a6e22e">void</span> onNext(Object <span style="color:#a6e22e">o</span>) {
+        System.<span style="color:#a6e22e">out</span>.<span style="color:#a6e22e">println</span>(<span style="color:#e6db74">&#34;onNext -&gt; &#34;</span> <span style="color:#f92672">+</span> o);
+    }
+
+    <span style="color:#a6e22e">@Override</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#a6e22e">void</span> onError(Throwable <span style="color:#a6e22e">t</span>) {
+        System.<span style="color:#a6e22e">out</span>.<span style="color:#a6e22e">println</span>(<span style="color:#e6db74">&#34;onError -&gt; &#34;</span> <span style="color:#f92672">+</span> t);
+    }
+
+    <span style="color:#a6e22e">@Override</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#a6e22e">void</span> onComplete() {
+        System.<span style="color:#a6e22e">out</span>.<span style="color:#a6e22e">println</span>(<span style="color:#e6db74">&#34;onComplete ~&#34;</span>);
+    }
+};
+
+<span style="color:#75715e">// 输出
+</span><span style="color:#75715e">// class reactor.core.publisher.Operators$EmptySubscription
+</span><span style="color:#75715e">// onComplete ~
+</span><span style="color:#75715e"></span>Flux.<span style="color:#a6e22e">empty</span>().<span style="color:#a6e22e">subscribe</span>(coreSubscriber);
+
+<span style="color:#75715e">// 输出
+</span><span style="color:#75715e">// class reactor.core.publisher.Operators$EmptySubscription
+</span><span style="color:#75715e"></span>Flux.<span style="color:#a6e22e">never</span>().<span style="color:#a6e22e">subscribe</span>(coreSubscriber);
+
+<span style="color:#75715e">// 输出 
+</span><span style="color:#75715e">// class reactor.core.publisher.Operators$EmptySubscription
+</span><span style="color:#75715e">// onError -&gt; java.lang.NullPointerException
+</span><span style="color:#75715e"></span>Flux.<span style="color:#a6e22e">error</span>(<span style="color:#66d9ef">new</span> NullPointerException()).<span style="color:#a6e22e">subscribe</span>(coreSubscriber);</code></pre></div>
+<h3 id="generate-create">generate / create</h3>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#75715e">// 不断生成数据，直到显式调用 complete() 方法
+</span><span style="color:#75715e"></span>Flux.<span style="color:#a6e22e">generate</span>(sink <span style="color:#f92672">-&gt;</span> {
+    <span style="color:#66d9ef">final</span> <span style="color:#a6e22e">double</span> random <span style="color:#f92672">=</span> Math.<span style="color:#a6e22e">random</span>();
+    sink.<span style="color:#a6e22e">next</span>(<span style="color:#e6db74">&#34;generate: &#34;</span> <span style="color:#f92672">+</span> random);
+
+    <span style="color:#75715e">// ❤ next 只能调用1次，否则会抛出以下异常
+</span><span style="color:#75715e"></span>    <span style="color:#75715e">// reactor.core.Exceptions$ErrorCallbackNotImplemented: java.lang.IllegalStateException: More than one call to onNext
+</span><span style="color:#75715e"></span>    <span style="color:#75715e">// sink.next(&#34;BBBBB&#34;);
+</span><span style="color:#75715e"></span>
+    <span style="color:#75715e">// ❤ 需要显示调用 complete
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">if</span> (random <span style="color:#f92672">*</span> 10 <span style="color:#f92672">&gt;=</span> 9) {
+        sink.<span style="color:#a6e22e">complete</span>();
+    }
+}).<span style="color:#a6e22e">subscribe</span>(System.<span style="color:#a6e22e">out</span><span style="color:#f92672">::</span>println);
+
+<span style="color:#75715e">// 创建数据流
+</span><span style="color:#75715e"></span>Flux.<span style="color:#a6e22e">create</span>(sink <span style="color:#f92672">-&gt;</span> {
+    <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">int</span> <span style="color:#a6e22e">i</span> <span style="color:#f92672">=</span> 0; i <span style="color:#f92672">&lt;</span> 10; i<span style="color:#f92672">++</span>) {
+        sink.<span style="color:#a6e22e">next</span>(<span style="color:#e6db74">&#34;create: &#34;</span> <span style="color:#f92672">+</span> i);
+    }
+}).<span style="color:#a6e22e">subscribe</span>(System.<span style="color:#a6e22e">out</span><span style="color:#f92672">::</span>println);</code></pre></div>
+<h3 id="zip">zip</h3>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">Flux.<span style="color:#a6e22e">zip</span>(
+        Flux.<span style="color:#a6e22e">just</span>(<span style="color:#e6db74">&#34;A&#34;</span>, <span style="color:#e6db74">&#34;B&#34;</span>, <span style="color:#e6db74">&#34;C&#34;</span>),
+        Flux.<span style="color:#a6e22e">just</span>(<span style="color:#e6db74">&#34;1&#34;</span>, <span style="color:#e6db74">&#34;2&#34;</span>, <span style="color:#e6db74">&#34;3&#34;</span>)
+).<span style="color:#a6e22e">subscribe</span>(System.<span style="color:#a6e22e">out</span><span style="color:#f92672">::</span>println);
+
+<span style="color:#75715e">// 输出
+</span><span style="color:#75715e"></span>[A,1]
+[B,2]
+[C,3]</code></pre></div>
+<p><img src="https://projectreactor.io/docs/core/release/api/reactor/core/publisher/doc-files/marbles/zipFixedSourcesForFlux.svg" alt="" /></p>
+
+<h3 id="merge-mergesequential-concat">merge / mergeSequential / concat</h3>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#75715e">// 按元素实际产生的顺序 合并
+</span><span style="color:#75715e"></span>Flux.<span style="color:#a6e22e">merge</span>(
+  <span style="color:#75715e">// 每 400ms 产生一次数据
+</span><span style="color:#75715e"></span>  Flux.<span style="color:#a6e22e">interval</span>(Duration.<span style="color:#a6e22e">of</span>(400, ChronoUnit.<span style="color:#a6e22e">MILLIS</span>)).<span style="color:#a6e22e">take</span>(5),
+  <span style="color:#75715e">// 延时一秒，每 400ms 产生一次数据
+</span><span style="color:#75715e"></span>  Flux.<span style="color:#a6e22e">interval</span>(Duration.<span style="color:#a6e22e">ofSeconds</span>(1), Duration.<span style="color:#a6e22e">ofMillis</span>(400)).<span style="color:#a6e22e">take</span>(5)
+).<span style="color:#a6e22e">toStream</span>().<span style="color:#a6e22e">forEach</span>(System.<span style="color:#a6e22e">out</span><span style="color:#f92672">::</span>println);
+
+
+<span style="color:#75715e">// 按被订阅的顺序 合并
+</span><span style="color:#75715e"></span>Flux.<span style="color:#a6e22e">mergeSequential</span>(
+  <span style="color:#75715e">// 每 400ms 产生一次数据
+</span><span style="color:#75715e"></span>  Flux.<span style="color:#a6e22e">interval</span>(Duration.<span style="color:#a6e22e">of</span>(400, ChronoUnit.<span style="color:#a6e22e">MILLIS</span>)).<span style="color:#a6e22e">take</span>(5),
+  <span style="color:#75715e">// 延时一秒，每 400ms 产生一次数据
+</span><span style="color:#75715e"></span>  Flux.<span style="color:#a6e22e">interval</span>(Duration.<span style="color:#a6e22e">ofSeconds</span>(1), Duration.<span style="color:#a6e22e">ofMillis</span>(400)).<span style="color:#a6e22e">take</span>(5)
+).<span style="color:#a6e22e">toStream</span>().<span style="color:#a6e22e">forEach</span>(System.<span style="color:#a6e22e">out</span><span style="color:#f92672">::</span>println);
+
+<span style="color:#75715e">// ❤❤❤ concat 与 mergeSequential 的区别 ❤❤❤
+</span><span style="color:#75715e">// mergeSequential 的数据流是同时产生的，只是后一个数据流在前一个数据流之后输出，1~5 一次性立即输出
+</span><span style="color:#75715e">// concat 的后一个数据流是在前一个数据流结束后才开始，1~5 是一个一个生成输出的
+</span><span style="color:#75715e"></span>Flux.<span style="color:#a6e22e">concat</span>(
+  <span style="color:#75715e">// 每 400ms 产生一次数据
+</span><span style="color:#75715e"></span>  Flux.<span style="color:#a6e22e">interval</span>(Duration.<span style="color:#a6e22e">of</span>(400, ChronoUnit.<span style="color:#a6e22e">MILLIS</span>)).<span style="color:#a6e22e">take</span>(5),
+  <span style="color:#75715e">// 延时一秒，每 400ms 产生一次数据
+</span><span style="color:#75715e"></span>  Flux.<span style="color:#a6e22e">interval</span>(Duration.<span style="color:#a6e22e">ofSeconds</span>(1), Duration.<span style="color:#a6e22e">ofMillis</span>(400)).<span style="color:#a6e22e">take</span>(5)
+).<span style="color:#a6e22e">toStream</span>().<span style="color:#a6e22e">forEach</span>(System.<span style="color:#a6e22e">out</span><span style="color:#f92672">::</span>println);</code></pre></div>
+<p><img src="https://projectreactor.io/docs/core/release/api/reactor/core/publisher/doc-files/marbles/mergeFixedSources.svg" alt="" /></p>
+
+<hr />
+
+<p><img src="https://projectreactor.io/docs/core/release/api/reactor/core/publisher/doc-files/marbles/mergeSequentialVarSources.svg" alt="" /></p>
+
+<hr />
+
+<p><img src="https://projectreactor.io/docs/core/release/api/reactor/core/publisher/doc-files/marbles/concatVarSources.svg" alt="" /></p>
+
+<h3 id="combinelatest">combineLatest</h3>
+
+<blockquote>
+<p>多个数据库 产生的 最新数据组合 输出</p>
+</blockquote>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">Flux.<span style="color:#a6e22e">combineLatest</span>(
+    Arrays<span style="color:#f92672">::</span>toString,
+    Flux.<span style="color:#a6e22e">interval</span>(Duration.<span style="color:#a6e22e">ofSeconds</span>(2)).<span style="color:#a6e22e">take</span>(3),
+    Flux.<span style="color:#a6e22e">just</span>(<span style="color:#e6db74">&#34;A&#34;</span>, <span style="color:#e6db74">&#34;B&#34;</span>)
+).<span style="color:#a6e22e">subscribe</span>(System.<span style="color:#a6e22e">out</span><span style="color:#f92672">::</span>println);
+<span style="color:#75715e">// 输出
+</span><span style="color:#75715e"></span>[0, B]
+[1, B]
+[2, B]
+
+<span style="color:#a6e22e">Flux</span>.<span style="color:#a6e22e">combineLatest</span>(
+    Arrays<span style="color:#f92672">::</span>toString,
+    Flux.<span style="color:#a6e22e">interval</span>(Duration.<span style="color:#a6e22e">ofMillis</span>(10)).<span style="color:#a6e22e">take</span>(3),
+    Flux.<span style="color:#a6e22e">interval</span>(Duration.<span style="color:#a6e22e">ofMillis</span>(15)).<span style="color:#a6e22e">take</span>(3)
+).<span style="color:#a6e22e">toStream</span>().<span style="color:#a6e22e">forEach</span>(System.<span style="color:#a6e22e">out</span><span style="color:#f92672">::</span>println);
+<span style="color:#75715e">// 输出
+</span><span style="color:#75715e"></span>[0, 0]
+[1, 0]
+[1, 1]
+[2, 1]
+[2, 2]</code></pre></div>
+<p><img src="https://projectreactor.io/docs/core/release/api/reactor/core/publisher/doc-files/marbles/combineLatest.svg" alt="" /></p>
+
+<h3 id="first">first</h3>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#75715e">// 多个数据流 只 输出第一数据库 -&gt; 1,2,3
+</span><span style="color:#75715e"></span>Flux.<span style="color:#a6e22e">first</span>(
+  Flux.<span style="color:#a6e22e">just</span>(1, 2, 3),
+  Flux.<span style="color:#a6e22e">just</span>(<span style="color:#e6db74">&#34;A&#34;</span>, <span style="color:#e6db74">&#34;B&#34;</span>, <span style="color:#e6db74">&#34;C&#34;</span>)
+).<span style="color:#a6e22e">toStream</span>().<span style="color:#a6e22e">forEach</span>(System.<span style="color:#a6e22e">out</span><span style="color:#f92672">::</span>println);</code></pre></div>
+<h3 id="defer">defer</h3>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">Supplier<span style="color:#f92672">&lt;</span>Integer<span style="color:#f92672">&gt;</span> <span style="color:#a6e22e">data</span> <span style="color:#f92672">=</span> () <span style="color:#f92672">-&gt;</span> {
+    System.<span style="color:#a6e22e">out</span>.<span style="color:#a6e22e">println</span>(<span style="color:#e6db74">&#34;getData&#34;</span>);
+    <span style="color:#66d9ef">return</span> 1;
+};
+
+<span style="color:#66d9ef">final</span> <span style="color:#a6e22e">Flux</span><span style="color:#f92672">&lt;</span>Integer<span style="color:#f92672">&gt;</span> <span style="color:#a6e22e">deferFlux</span> <span style="color:#f92672">=</span> Flux.<span style="color:#a6e22e">defer</span>(() <span style="color:#f92672">-&gt;</span> Flux.<span style="color:#a6e22e">just</span>(data.<span style="color:#a6e22e">get</span>(), data.<span style="color:#a6e22e">get</span>()));
+System.<span style="color:#a6e22e">out</span>.<span style="color:#a6e22e">println</span>(<span style="color:#e6db74">&#34;subscribe&#34;</span>);
+deferFlux.<span style="color:#a6e22e">subscribe</span>(System.<span style="color:#a6e22e">out</span><span style="color:#f92672">::</span>println);
+
+System.<span style="color:#a6e22e">out</span>.<span style="color:#a6e22e">println</span>();
+
+<span style="color:#66d9ef">final</span> <span style="color:#a6e22e">Flux</span><span style="color:#f92672">&lt;</span>Integer<span style="color:#f92672">&gt;</span> <span style="color:#a6e22e">justFlux</span> <span style="color:#f92672">=</span> Flux.<span style="color:#a6e22e">just</span>(data.<span style="color:#a6e22e">get</span>(), data.<span style="color:#a6e22e">get</span>());
+System.<span style="color:#a6e22e">out</span>.<span style="color:#a6e22e">println</span>(<span style="color:#e6db74">&#34;subscribe&#34;</span>);
+justFlux.<span style="color:#a6e22e">subscribe</span>(System.<span style="color:#a6e22e">out</span><span style="color:#f92672">::</span>println);
+
+<span style="color:#75715e">// 从输出上查看区别
+</span><span style="color:#75715e"></span>subscribe  <span style="color:#75715e">// 在 subscribe 的时候进行调用
+</span><span style="color:#75715e"></span>getData
+<span style="color:#a6e22e">getData</span>
+1
+<span style="color:#a6e22e">1</span>
+
+getData
+<span style="color:#a6e22e">getData</span>
+subscribe  <span style="color:#75715e">// 声明时候就立即被调用
+</span><span style="color:#75715e"></span>1
+<span style="color:#a6e22e">1</span></code></pre></div>
+<h2 id="instance-methods">Instance Methods</h2>
+
+<h3 id="map-collectmap">map / collectMap</h3>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#75715e">// 对现有数据进行转换
+</span><span style="color:#75715e"></span>Flux.<span style="color:#a6e22e">just</span>(1, 2, 3).<span style="color:#a6e22e">map</span>(d <span style="color:#f92672">-&gt;</span> d <span style="color:#f92672">*</span> d).<span style="color:#a6e22e">subscribe</span>(System.<span style="color:#a6e22e">out</span><span style="color:#f92672">::</span>println);
+
+<span style="color:#75715e">// 抽取 Map 的 Key -&gt; {1=1, 4=2, 9=3}
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">final</span> <span style="color:#a6e22e">Mono</span><span style="color:#f92672">&lt;</span>Map<span style="color:#f92672">&lt;</span>Integer, Integer<span style="color:#f92672">&gt;&gt;</span> <span style="color:#a6e22e">mapMono</span> <span style="color:#f92672">=</span> Flux.<span style="color:#a6e22e">just</span>(1, 2, 3).<span style="color:#a6e22e">collectMap</span>(d <span style="color:#f92672">-&gt;</span> d <span style="color:#f92672">*</span> d);
+<span style="color:#66d9ef">final</span> <span style="color:#a6e22e">Map</span><span style="color:#f92672">&lt;</span>Integer, Integer<span style="color:#f92672">&gt;</span> <span style="color:#a6e22e">block</span> <span style="color:#f92672">=</span> mapMono.<span style="color:#a6e22e">block</span>();
+System.<span style="color:#a6e22e">out</span>.<span style="color:#a6e22e">println</span>(block);</code></pre></div>
+<h3 id="filter">filter</h3>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#75715e">// 输出 偶数
+</span><span style="color:#75715e"></span>Flux.<span style="color:#a6e22e">range</span>(0, 10).<span style="color:#a6e22e">filter</span>(c <span style="color:#f92672">-&gt;</span> c <span style="color:#f92672">%</span> 2 <span style="color:#f92672">==</span> 0).<span style="color:#a6e22e">subscribe</span>(System.<span style="color:#a6e22e">out</span><span style="color:#f92672">::</span>println);
+
+<span style="color:#75715e">// 与 Java 8 Stream 一致
+</span><span style="color:#75715e"></span>Flux.<span style="color:#a6e22e">range</span>(0, 10).<span style="color:#a6e22e">toStream</span>().<span style="color:#a6e22e">filter</span>(c <span style="color:#f92672">-&gt;</span> c <span style="color:#f92672">%</span> 2 <span style="color:#f92672">==</span> 0).<span style="color:#a6e22e">forEach</span>(System.<span style="color:#a6e22e">out</span><span style="color:#f92672">::</span>println);</code></pre></div>
+<h3 id="buffer-window">buffer / window</h3>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">Flux.<span style="color:#a6e22e">range</span>(0, 5).<span style="color:#a6e22e">buffer</span>(3).<span style="color:#a6e22e">subscribe</span>(System.<span style="color:#a6e22e">out</span><span style="color:#f92672">::</span>println);
+
+Flux.<span style="color:#a6e22e">interval</span>(Duration.<span style="color:#a6e22e">of</span>(1, ChronoUnit.<span style="color:#a6e22e">SECONDS</span>))
+        .<span style="color:#a6e22e">bufferTimeout</span>(2, Duration.<span style="color:#a6e22e">ofSeconds</span>(3))
+        .<span style="color:#a6e22e">subscribe</span>(System.<span style="color:#a6e22e">out</span><span style="color:#f92672">::</span>println);</code></pre></div>
+<p><img src="https://projectreactor.io/docs/core/release/api/reactor/core/publisher/doc-files/marbles/buffer.svg" alt="" /></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#75715e">// window 和 buffer 的区别是 window 发出的数据类型 是 Flux&lt;T&gt;，buffer 是 T
+</span><span style="color:#75715e"></span>Flux.<span style="color:#a6e22e">range</span>(0, 5).<span style="color:#a6e22e">window</span>(2).<span style="color:#a6e22e">subscribe</span>((Flux<span style="color:#f92672">&lt;</span>Integer<span style="color:#f92672">&gt;</span> <span style="color:#a6e22e">up</span>) <span style="color:#f92672">-&gt;</span> {
+    System.<span style="color:#a6e22e">out</span>.<span style="color:#a6e22e">println</span>(<span style="color:#e6db74">&#34;--&#34;</span>);
+    up.<span style="color:#a6e22e">subscribe</span>(System.<span style="color:#a6e22e">out</span><span style="color:#f92672">::</span>println);
+});
+<span style="color:#75715e">// 输出
+</span><span style="color:#75715e"></span><span style="color:#f92672">--</span>
+0
+<span style="color:#a6e22e">1</span>
+<span style="color:#f92672">--</span>
+2
+<span style="color:#a6e22e">3</span>
+<span style="color:#f92672">--</span>
+4</code></pre></div>
+<p><img src="https://projectreactor.io/docs/core/release/api/reactor/core/publisher/doc-files/marbles/windowWithMaxSize.svg" alt="" /></p>
+
+<h3 id="zipwith-zipwithiterable">zipWith / zipWithIterable</h3>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">Flux.<span style="color:#a6e22e">just</span>(<span style="color:#e6db74">&#34;A&#34;</span>, <span style="color:#e6db74">&#34;B&#34;</span>, <span style="color:#e6db74">&#34;C&#34;</span>)
+    .<span style="color:#a6e22e">zipWith</span>(Flux.<span style="color:#a6e22e">just</span>(<span style="color:#e6db74">&#34;1&#34;</span>, <span style="color:#e6db74">&#34;2&#34;</span>))
+    .<span style="color:#a6e22e">zipWith</span>(Flux.<span style="color:#a6e22e">just</span>(<span style="color:#e6db74">&#34;a&#34;</span>, <span style="color:#e6db74">&#34;b&#34;</span>, <span style="color:#e6db74">&#34;c&#34;</span>, <span style="color:#e6db74">&#34;d&#34;</span>))
+    .<span style="color:#a6e22e">subscribe</span>((Tuple2<span style="color:#f92672">&lt;</span>Tuple2<span style="color:#f92672">&lt;</span>String, String<span style="color:#f92672">&gt;</span>, String<span style="color:#f92672">&gt;</span> <span style="color:#a6e22e">x</span>) <span style="color:#f92672">-&gt;</span> System.<span style="color:#a6e22e">out</span>.<span style="color:#a6e22e">println</span>(x));
+
+Flux.<span style="color:#a6e22e">just</span>(<span style="color:#e6db74">&#34;A&#34;</span>, <span style="color:#e6db74">&#34;B&#34;</span>, <span style="color:#e6db74">&#34;C&#34;</span>)
+    .<span style="color:#a6e22e">zipWithIterable</span>(Arrays.<span style="color:#a6e22e">asList</span>(<span style="color:#e6db74">&#34;1&#34;</span>, <span style="color:#e6db74">&#34;2&#34;</span>, <span style="color:#e6db74">&#34;3&#34;</span>))
+    .<span style="color:#a6e22e">subscribe</span>(System.<span style="color:#a6e22e">out</span><span style="color:#f92672">::</span>println);</code></pre></div>
+<h3 id="take-takewhile-takeuntil">take / takeWhile / takeUntil</h3>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#75715e">// 取 前3个 -&gt; 1,2,3
+</span><span style="color:#75715e"></span>Flux.<span style="color:#a6e22e">range</span>(1, 10).<span style="color:#a6e22e">take</span>(3).<span style="color:#a6e22e">subscribe</span>(System.<span style="color:#a6e22e">out</span><span style="color:#f92672">::</span>println);
+
+<span style="color:#75715e">// 取 后3个 -&gt; 8,9,10
+</span><span style="color:#75715e"></span>Flux.<span style="color:#a6e22e">range</span>(1, 10).<span style="color:#a6e22e">takeLast</span>(3).<span style="color:#a6e22e">subscribe</span>(System.<span style="color:#a6e22e">out</span><span style="color:#f92672">::</span>println);
+
+<span style="color:#75715e">// 先判断条件是否成立，然后再决定是否取元素，即 如果一开始条件不成立，就直接终止了 -&gt; 什么也不输出
+</span><span style="color:#75715e"></span>Flux.<span style="color:#a6e22e">range</span>(1, 10).<span style="color:#a6e22e">takeWhile</span>(c <span style="color:#f92672">-&gt;</span> c <span style="color:#f92672">&gt;</span> 1 <span style="color:#f92672">&amp;&amp;</span> c <span style="color:#f92672">&lt;</span> 5).<span style="color:#a6e22e">subscribe</span>(System.<span style="color:#a6e22e">out</span><span style="color:#f92672">::</span>println);
+
+<span style="color:#75715e">// 先取元素，直到遇到条件成立才停下 -&gt; 1,2
+</span><span style="color:#75715e"></span>Flux.<span style="color:#a6e22e">range</span>(1, 10).<span style="color:#a6e22e">takeUntil</span>(c <span style="color:#f92672">-&gt;</span> c <span style="color:#f92672">&gt;</span> 1 <span style="color:#f92672">&amp;&amp;</span> c <span style="color:#f92672">&lt;</span> 5).<span style="color:#a6e22e">subscribe</span>(System.<span style="color:#a6e22e">out</span><span style="color:#f92672">::</span>println);
+
+<span style="color:#66d9ef">final</span> <span style="color:#a6e22e">Flux</span><span style="color:#f92672">&lt;</span>Long<span style="color:#f92672">&gt;</span> <span style="color:#a6e22e">intervalFlux</span> <span style="color:#f92672">=</span> Flux.<span style="color:#a6e22e">interval</span>(Duration.<span style="color:#a6e22e">ofSeconds</span>(1));
+intervalFlux.<span style="color:#a6e22e">subscribe</span>(System.<span style="color:#a6e22e">out</span><span style="color:#f92672">::</span>println);
+<span style="color:#75715e">// 三秒后 takeUntilOther 结束
+</span><span style="color:#75715e"></span>TimeUnit.<span style="color:#a6e22e">SECONDS</span>.<span style="color:#a6e22e">sleep</span>(3);
+intervalFlux.<span style="color:#a6e22e">takeUntilOther</span>(Flux.<span style="color:#a6e22e">empty</span>());
+<span style="color:#f92672">//</span> 输出 <span style="color:#a6e22e">0</span>,1,2</code></pre></div>
+<h3 id="reduce-reducewith">reduce / reduceWith</h3>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#75715e">// 1 ~ 10 累加 -&gt; 55
+</span><span style="color:#75715e"></span>Flux.<span style="color:#a6e22e">range</span>(1, 10).<span style="color:#a6e22e">reduce</span>((x, y) <span style="color:#f92672">-&gt;</span> x <span style="color:#f92672">+</span> y).<span style="color:#a6e22e">subscribe</span>(System.<span style="color:#a6e22e">out</span><span style="color:#f92672">::</span>println);
+
+<span style="color:#75715e">// 初始值10 与 1 ~ 10 累加 -&gt; 65
+</span><span style="color:#75715e"></span>Flux.<span style="color:#a6e22e">range</span>(1, 10).<span style="color:#a6e22e">reduceWith</span>(() <span style="color:#f92672">-&gt;</span> 10, (x, y) <span style="color:#f92672">-&gt;</span> x <span style="color:#f92672">+</span> y).<span style="color:#a6e22e">subscribe</span>(System.<span style="color:#a6e22e">out</span><span style="color:#f92672">::</span>println);</code></pre></div>
+<h2 id="read-more">Read More</h2>
+
+<ul>
+<li><a href="https://www.cnblogs.com/yjmyzz/p/reactor-tutorial-1.html">Reactor 3 学习笔记(1)</a></li>
+<li><a href="https://www.cnblogs.com/yjmyzz/p/reactor-tutorial-2.html">Reactor 3 学习笔记(2)</a></li>
+</ul>
+</article>
+
+      
+<div class="book-footer justify-between">
+  
+  <div>
+    
+    <a href="https://github.com/hello-world-example/Reactor/commit/a23442ac5630745158fdcd6a31ce4f3154a0d3ef" title='Last modified Feb 1, 2020 by 杨凯彬' target="_blank" rel="noopener">
+      <img src="/Reactor/svg/calendar.svg" alt="Changed" /> Feb 1, 2020
+    </a>
+  </div>
+  
+  
+  <div>
+    <a href="https://github.com/hello-world-example/Reactor/edit/master/HuGo/content/docs/Reactor/Operator.md" target="_blank" rel="noopener">
+      <img src="/Reactor/svg/edit.svg" alt="Edit" /> Edit this page
+    </a>
+  </div>
+  
+</div>
+
+
+      
+    </div>
+
+    
+  
+
+  <aside class="book-toc level-3 fixed">
+    <nav id="TableOfContents">
+<ul>
+<li><a href="#操作符">操作符</a>
+<ul>
+<li><a href="#static-methods">Static Methods</a>
+<ul>
+<li><a href="#just-fromarray-range-interval">just / fromArray / range / interval</a></li>
+<li><a href="#empty-never-error">empty / never / error</a></li>
+<li><a href="#generate-create">generate / create</a></li>
+<li><a href="#zip">zip</a></li>
+<li><a href="#merge-mergesequential-concat">merge / mergeSequential / concat</a></li>
+<li><a href="#combinelatest">combineLatest</a></li>
+<li><a href="#first">first</a></li>
+<li><a href="#defer">defer</a></li>
+</ul></li>
+<li><a href="#instance-methods">Instance Methods</a>
+<ul>
+<li><a href="#map-collectmap">map / collectMap</a></li>
+<li><a href="#filter">filter</a></li>
+<li><a href="#buffer-window">buffer / window</a></li>
+<li><a href="#zipwith-zipwithiterable">zipWith / zipWithIterable</a></li>
+<li><a href="#take-takewhile-takeuntil">take / takeWhile / takeUntil</a></li>
+<li><a href="#reduce-reducewith">reduce / reduceWith</a></li>
+</ul></li>
+<li><a href="#read-more">Read More</a></li>
+</ul></li>
+</ul>
+</nav>
+  </aside>
+
+
+
+  </main>
+  
+  
+  
+</body>
+
+</html>
