@@ -15,7 +15,16 @@
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://hello-world-example.github.io/Reactor/_sidebar/</guid>
-      <description> 傻傻分不清 Reactive Streams 规范 CompletableFuture Reactor  操作符 线程调度    </description>
+      <description> 傻傻分不清 Reactive Streams 规范 CompletableFuture Reactor  操作符 线程调度  Action  窗口批量操作   </description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>https://hello-world-example.github.io/Reactor/docs/Action/Window-Batch/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://hello-world-example.github.io/Reactor/docs/Action/Window-Batch/</guid>
+      <description>窗口批量操作 适用场景  缓存指定时间 或 指定量的数据，批量持久化 对最近一段时间的数据进行统计，然后持久化  相关 Flux API  window(Duration windowingTimespan) window(int maxSize) windowTimeout(int maxSize, Duration maxTime) windowUntilChanged() windowWhile(Predicate&amp;lt;T&amp;gt; inclusionPredicate)  代码示例 public class BatchOperateDemo&amp;lt;T&amp;gt; { private BlockingQueue&amp;lt;T&amp;gt; queue = new LinkedBlockingQueue&amp;lt;&amp;gt;(); /** * 数据来源（从队列中拿） */ private Consumer&amp;lt;SynchronousSink&amp;lt;T&amp;gt;&amp;gt; provider = sink -&amp;gt; { try { sink.next(queue.take()); } catch (InterruptedException e) { e.printStackTrace(); } }; /** * 投喂数据 */ public void feed(final T data) throws InterruptedException { queue.</description>
     </item>
     
     <item>

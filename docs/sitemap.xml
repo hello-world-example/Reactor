@@ -8,6 +8,11 @@
   </url>
   
   <url>
+    <loc>https://hello-world-example.github.io/Reactor/docs/Action/Window-Batch/</loc>
+    <priority>0</priority>
+  </url>
+  
+  <url>
     <loc>https://hello-world-example.github.io/Reactor/docs/CompletableFuture/</loc>
     <priority>0</priority>
   </url>

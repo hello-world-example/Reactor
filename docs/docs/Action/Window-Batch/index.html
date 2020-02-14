@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Window Batch | Reactor</title>
+
+
+<link rel="stylesheet" href="/Reactor/book.min.80ce348dabc24f4b988624dd4986625a0cf59ecb530e87b4192da6306e047f04.css">
+
+
+
+
+<link rel="icon" href="/Reactor/favicon.png" type="image/x-icon">
+
+
+<!--
+Made with Book Theme
+https://github.com/alex-shpak/hugo-book
+-->
+
+  
+</head>
+
+<body>
+  <input type="checkbox" style="display: none" id="menu-control" />
+  <main class="flex container">
+
+    <aside class="book-menu fixed">
+      <nav>
+<h2 class="book-brand">
+  <a href="https://hello-world-example.github.io/Reactor/">Reactor</a>
+</h2>
+
+
+
+
+
+
+    
+  
+  
+  
+
+  <style>
+  nav ul a[href$="\2fReactor\2f docs\2f Action\2fWindow-Batch\2f "] {
+      color: #004ed0;
+  }
+  </style>
+
+<ul>
+<li><a href="/Reactor/docs/Diff/">傻傻分不清</a></li>
+<li><a href="/Reactor/docs/Reactive-Streams/">Reactive Streams 规范</a></li>
+<li>CompletableFuture</li>
+<li><strong>Reactor</strong>
+
+<ul>
+<li><a href="/Reactor/docs/Reactor/Operator/">操作符</a></li>
+<li><a href="/Reactor/docs/Reactor/Schedulers/">线程调度</a></li>
+</ul></li>
+<li><strong>Action</strong>
+
+<ul>
+<li><a href="/Reactor/docs/Action/Window-Batch/">窗口批量操作</a></li>
+</ul></li>
+</ul>
+
+
+
+
+
+
+
+</nav>
+
+
+<script>
+(function() {
+  var menu = document.querySelector("aside.book-menu nav");
+  addEventListener("beforeunload", function(event) {
+    localStorage.setItem("menu.scrollTop", menu.scrollTop);
+  });
+  menu.scrollTop = localStorage.getItem("menu.scrollTop");
+})();
+</script>
+
+    </aside>
+
+    <div class="book-page">
+      <header class="flex align-center justify-between book-header">
+  <label for="menu-control">
+    <img src="/Reactor/svg/menu.svg" alt="Menu" />
+  </label>
+  <strong>Window Batch</strong>
+</header>
+
+      
+<article class="markdown">
+
+<h1 id="窗口批量操作">窗口批量操作</h1>
+
+<h2 id="适用场景">适用场景</h2>
+
+<ul>
+<li>缓存指定时间 或 指定量的数据，批量持久化</li>
+<li>对<strong>最近一段时间的数据进行统计</strong>，然后持久化</li>
+</ul>
+
+<h2 id="相关-flux-api">相关 Flux API</h2>
+
+<ul>
+<li><code>window(Duration windowingTimespan)</code></li>
+<li><code>window(int maxSize)</code></li>
+<li><code>windowTimeout(int maxSize, Duration maxTime)</code></li>
+<li><code>windowUntilChanged()</code></li>
+<li><code>windowWhile(Predicate&lt;T&gt; inclusionPredicate)</code></li>
+</ul>
+
+<h2 id="代码示例">代码示例</h2>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#a6e22e">class</span> BatchOperateDemo<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> {
+
+  <span style="color:#66d9ef">private</span> <span style="color:#a6e22e">BlockingQueue</span><span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> <span style="color:#a6e22e">queue</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> LinkedBlockingQueue<span style="color:#f92672">&lt;&gt;</span>();
+
+  <span style="color:#75715e">/**
+</span><span style="color:#75715e">   * 数据来源（从队列中拿）
+</span><span style="color:#75715e">   */</span>
+  <span style="color:#66d9ef">private</span> <span style="color:#a6e22e">Consumer</span><span style="color:#f92672">&lt;</span>SynchronousSink<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;&gt;</span> <span style="color:#a6e22e">provider</span> <span style="color:#f92672">=</span> sink <span style="color:#f92672">-&gt;</span> {
+    <span style="color:#66d9ef">try</span> {
+      sink.<span style="color:#a6e22e">next</span>(queue.<span style="color:#a6e22e">take</span>());
+    } <span style="color:#66d9ef">catch</span> (InterruptedException <span style="color:#a6e22e">e</span>) {
+      e.<span style="color:#a6e22e">printStackTrace</span>();
+    }
+  };
+
+  <span style="color:#75715e">/**
+</span><span style="color:#75715e">   * 投喂数据
+</span><span style="color:#75715e">   */</span>
+  <span style="color:#66d9ef">public</span> <span style="color:#a6e22e">void</span> feed(<span style="color:#66d9ef">final</span> <span style="color:#a6e22e">T</span> data) <span style="color:#66d9ef">throws</span> <span style="color:#a6e22e">InterruptedException</span> {
+    queue.<span style="color:#a6e22e">put</span>(data);
+  }
+
+  <span style="color:#75715e">/**
+</span><span style="color:#75715e">   * 打印指定窗口 数据量
+</span><span style="color:#75715e">   */</span>
+  <span style="color:#66d9ef">private</span> <span style="color:#a6e22e">Consumer</span><span style="color:#f92672">&lt;</span>Flux<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;&gt;</span> <span style="color:#a6e22e">countConsumer</span>() {
+    <span style="color:#66d9ef">return</span> (Flux<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> <span style="color:#a6e22e">data</span>) <span style="color:#f92672">-&gt;</span> data.<span style="color:#a6e22e">count</span>().<span style="color:#a6e22e">subscribe</span>(System.<span style="color:#a6e22e">out</span><span style="color:#f92672">::</span>println);
+  }
+
+  <span style="color:#75715e">/**
+</span><span style="color:#75715e">   * 打印指定窗口 相同数据的个数
+</span><span style="color:#75715e">   */</span>
+  <span style="color:#66d9ef">private</span> <span style="color:#a6e22e">Consumer</span><span style="color:#f92672">&lt;</span>Flux<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;&gt;</span> <span style="color:#a6e22e">groupConsumer</span>() {
+    <span style="color:#66d9ef">return</span> (Flux<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> <span style="color:#a6e22e">data</span>) <span style="color:#f92672">-&gt;</span>
+      data.<span style="color:#a6e22e">groupBy</span>(d <span style="color:#f92672">-&gt;</span> d)
+      .<span style="color:#a6e22e">subscribe</span>(
+      gf <span style="color:#f92672">-&gt;</span> gf.<span style="color:#a6e22e">count</span>()
+      .<span style="color:#a6e22e">subscribe</span>(v <span style="color:#f92672">-&gt;</span> System.<span style="color:#a6e22e">out</span>.<span style="color:#a6e22e">println</span>(<span style="color:#e6db74">&#34;key:&#34;</span> <span style="color:#f92672">+</span> gf.<span style="color:#a6e22e">key</span>() <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34; value:&#34;</span> <span style="color:#f92672">+</span> v))
+    );
+  }
+
+
+  <span style="color:#66d9ef">public</span> <span style="color:#a6e22e">static</span> <span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> <span style="color:#a6e22e">BatchOperateDemo</span><span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> <span style="color:#a6e22e">count</span>(Duration <span style="color:#a6e22e">windowingTimespan</span>) {
+    <span style="color:#66d9ef">final</span> <span style="color:#a6e22e">BatchOperateDemo</span><span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> <span style="color:#a6e22e">operateDemo</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> BatchOperateDemo<span style="color:#f92672">&lt;&gt;</span>();
+    Flux.<span style="color:#a6e22e">generate</span>(operateDemo.<span style="color:#a6e22e">provider</span>)
+      .<span style="color:#a6e22e">window</span>(windowingTimespan)
+      <span style="color:#75715e">// ❤ ?
+</span><span style="color:#75715e"></span>      .<span style="color:#a6e22e">subscribeOn</span>(Schedulers.<span style="color:#a6e22e">newSingle</span>(<span style="color:#e6db74">&#34;BatchOperateDemo.count.Duration&#34;</span> <span style="color:#f92672">+</span> windowingTimespan))
+      .<span style="color:#a6e22e">subscribe</span>(operateDemo.<span style="color:#a6e22e">countConsumer</span>());
+    <span style="color:#66d9ef">return</span> operateDemo;
+  }
+
+  <span style="color:#66d9ef">public</span> <span style="color:#a6e22e">static</span> <span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> <span style="color:#a6e22e">BatchOperateDemo</span><span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> <span style="color:#a6e22e">group</span>(Duration <span style="color:#a6e22e">windowingTimespan</span>) {
+    <span style="color:#66d9ef">final</span> <span style="color:#a6e22e">BatchOperateDemo</span><span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> <span style="color:#a6e22e">operateDemo</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> BatchOperateDemo<span style="color:#f92672">&lt;&gt;</span>();
+    Flux.<span style="color:#a6e22e">generate</span>(operateDemo.<span style="color:#a6e22e">provider</span>)
+      .<span style="color:#a6e22e">window</span>(windowingTimespan)
+      <span style="color:#75715e">// ❤ ?
+</span><span style="color:#75715e"></span>      .<span style="color:#a6e22e">subscribeOn</span>(Schedulers.<span style="color:#a6e22e">newSingle</span>(<span style="color:#e6db74">&#34;BatchOperateDemo.group.Duration&#34;</span> <span style="color:#f92672">+</span> windowingTimespan))
+      .<span style="color:#a6e22e">subscribe</span>(operateDemo.<span style="color:#a6e22e">groupConsumer</span>());
+    <span style="color:#66d9ef">return</span> operateDemo;
+  }
+
+
+  <span style="color:#66d9ef">public</span> <span style="color:#a6e22e">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span>(String[] <span style="color:#a6e22e">args</span>) <span style="color:#66d9ef">throws</span> <span style="color:#a6e22e">InterruptedException</span> {
+    <span style="color:#75715e">/**
+</span><span style="color:#75715e">     * 每三秒统计一次
+</span><span style="color:#75715e">     */</span>
+    BatchOperateDemo<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">&gt;</span> <span style="color:#a6e22e">batchOperateDemo</span> <span style="color:#f92672">=</span> BatchOperateDemo.<span style="color:#a6e22e">group</span>(Duration.<span style="color:#a6e22e">ofSeconds</span>(3));
+
+    <span style="color:#75715e">/**
+</span><span style="color:#75715e">     * 生成模拟数据
+</span><span style="color:#75715e">     */</span>
+    <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">int</span> <span style="color:#a6e22e">i</span> <span style="color:#f92672">=</span> 0; i <span style="color:#f92672">&lt;</span> 1_0000; i<span style="color:#f92672">++</span>) {
+       TimeUnit.<span style="color:#a6e22e">MILLISECONDS</span>.<span style="color:#a6e22e">sleep</span>(100);
+       <span style="color:#75715e">// 投喂数据
+</span><span style="color:#75715e"></span>       batchOperateDemo.<span style="color:#a6e22e">feed</span>(String.<span style="color:#a6e22e">valueOf</span>((<span style="color:#66d9ef">long</span>) (Math.<span style="color:#a6e22e">random</span>() <span style="color:#f92672">*</span> 10)));
+    }
+
+  }
+
+}</code></pre></div>
+<h2 id="read-more">Read More</h2>
+
+<ul>
+<li><a href="https://projectreactor.io/docs/core/release/api/reactor/core/publisher/Flux.html#window-java.time.Duration-">window(Duration windowingTimespan)</a></li>
+</ul>
+</article>
+
+      
+<div class="book-footer justify-end">
+  
+  
+  <div>
+    <a href="https://github.com/hello-world-example/Reactor/edit/master/HuGo/content/docs/Action/Window-Batch.md" target="_blank" rel="noopener">
+      <img src="/Reactor/svg/edit.svg" alt="Edit" /> Edit this page
+    </a>
+  </div>
+  
+</div>
+
+
+      
+    </div>
+
+    
+  
+
+  <aside class="book-toc level-3 fixed">
+    <nav id="TableOfContents">
+<ul>
+<li><a href="#窗口批量操作">窗口批量操作</a>
+<ul>
+<li><a href="#适用场景">适用场景</a></li>
+<li><a href="#相关-flux-api">相关 Flux API</a></li>
+<li><a href="#代码示例">代码示例</a></li>
+<li><a href="#read-more">Read More</a></li>
+</ul></li>
+</ul>
+</nav>
+  </aside>
+
+
+
+  </main>
+  
+  
+  
+</body>
+
+</html>
