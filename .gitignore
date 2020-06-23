@@ -2,3 +2,8 @@ target
 *.iml
 .idea
 HuGo/themes/book
+
+.project
+.settings
+.classpath
+.factorypath
