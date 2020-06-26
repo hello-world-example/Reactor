@@ -12,6 +12,7 @@
     <modules>
         <module>demo-reactor-core</module>
         <module>demo-reactor-webflux</module>
+        <module>demo-reactor-netty</module>
     </modules>
 
 
