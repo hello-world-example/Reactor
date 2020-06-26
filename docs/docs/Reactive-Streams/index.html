@@ -7,7 +7,7 @@
 <title>Reactive Streams | Reactor</title>
 
 
-<link rel="stylesheet" href="/Reactor/book.min.80ce348dabc24f4b988624dd4986625a0cf59ecb530e87b4192da6306e047f04.css">
+<link rel="stylesheet" href="/Reactor/book.min.8b811952d51be801e1fc75452731cd80e6a243644b7c35ddd7d779e204cd784f.css">
 
 
 
@@ -54,16 +54,16 @@ https://github.com/alex-shpak/hugo-book
 <li><a href="/Reactor/docs/Reactive-Streams/">Reactive Streams 规范</a></li>
 <li>CompletableFuture</li>
 <li><strong>Reactor</strong>
-
 <ul>
 <li><a href="/Reactor/docs/Reactor/Operator/">操作符</a></li>
 <li><a href="/Reactor/docs/Reactor/Schedulers/">线程调度</a></li>
-</ul></li>
+</ul>
+</li>
 <li><strong>Action</strong>
-
 <ul>
 <li><a href="/Reactor/docs/Action/Window-Batch/">窗口批量操作</a></li>
-</ul></li>
+</ul>
+</li>
 </ul>
 
 
@@ -96,23 +96,17 @@ https://github.com/alex-shpak/hugo-book
 </header>
 
       
-<article class="markdown">
-
-<h1 id="reactive-streams-规范">Reactive Streams 规范</h1>
-
+<article class="markdown"><h1 id="reactive-streams-规范">Reactive Streams 规范</h1>
 <blockquote>
 <ul>
 <li>[英文原文] <a href="https://github.com/reactive-streams/reactive-streams-jvm/blob/v1.0.3/README.md">Reactive Streams</a></li>
 <li>[译文原文] <a href="https://www.cnblogs.com/lixinjie/p/a-reactive-streams-specification-on-jvm.html">JVM平台上的响应式流（Reactive Streams）规范</a></li>
 </ul>
 </blockquote>
-
 <p>Reactive Streams 的目的是为 非阻塞背压(backpressure) 的 异步流处理提供标准。目前已被纳入 JDK9。</p>
-
 <blockquote>
 <p>The purpose of Reactive Streams is to provide a standard for asynchronous stream processing with non-blocking backpressure.</p>
 </blockquote>
-
 <p>最新版本：</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-xml" data-lang="xml"><span style="color:#f92672">&lt;dependency&gt;</span>
   <span style="color:#f92672">&lt;groupId&gt;</span>org.reactivestreams<span style="color:#f92672">&lt;/groupId&gt;</span>
@@ -126,72 +120,54 @@ https://github.com/alex-shpak/hugo-book
   <span style="color:#f92672">&lt;artifactId&gt;</span>reactive-streams-tck<span style="color:#f92672">&lt;/artifactId&gt;</span>
   <span style="color:#f92672">&lt;version&gt;</span>1.0.3<span style="color:#f92672">&lt;/version&gt;</span>
   <span style="color:#f92672">&lt;scope&gt;</span>test<span style="color:#f92672">&lt;/scope&gt;</span>
-<span style="color:#f92672">&lt;/dependency&gt;</span></code></pre></div>
-<h2 id="goals-design-and-scope">Goals, Design and Scope</h2>
-
+<span style="color:#f92672">&lt;/dependency&gt;</span>
+</code></pre></div><h2 id="goals-design-and-scope">Goals, Design and Scope</h2>
 <p>处理流数据，尤其是 <strong>数据量无法预知的实时在线数据</strong>，在一个异步系统中要求格外小心。最需要关注的问题是资源的消耗需要被小心地控制，<strong>避免数据流过快压垮下游服务</strong> ( a fast data source does not overwhelm the stream destination)。异步是必要的，目的是为了并行地使用计算资源，如协调网络上多个主机，或一个机器的多个CPU核。</p>
-
 <p>响应式流的主要目标是控制横穿一个异步边界的流数据的交换。考虑到向另一个线程或线程池传递元素，同时确保接收端不被强迫缓冲任意数量的数据。换句话说，后压是这个模型的一个必须部分，目的是允许队列在被界定的线程之间进行调节。如果后压信号是同步的，异步处理的好处将被否定，因此对一个响应式流实现的所有方面的完全非阻塞和异步行为的授权需要小心一些。</p>
-
 <p>这个规范的意图就是允许创建许多种一致的实现，它们凭借遵守规则将能够平滑地互操作，在一个流应用的整个处理图中保留前文提到的好处和特征。</p>
-
 <p>需要注意的是流操作的精确特性（转化，分割，合并等）并没有被这个规范包括。<strong>响应式流只关心在不同的 API 组件间调节流数据</strong>。在他们的开发中，已经非常细心地确保所有组合流的基本方式都能够被表达。</p>
-
 <p>总之，响应式流是 JVM 上面向流的库的一个标准和规范：</p>
-
 <ul>
 <li>依次地</li>
 <li>处理一个潜在的无限数目元素</li>
 <li>异步地在组件间传递元素</li>
 <li>带有强制的非阻塞后压</li>
 </ul>
-
 <p>响应式流规范由以下部分组成：</p>
-
 <p>1、API 规定了需要实现的响应式流类型，并且在不同的实现间完成互操作性。</p>
-
-<p>2、<strong>The Technology Compatibility Kit (TCK)</strong>是一个标准的测试套件，用于各种实现的一致性测试。</p>
-
+<p>2、**The Technology Compatibility Kit (TCK)**是一个标准的测试套件，用于各种实现的一致性测试。</p>
 <p>各种实现可以自由地实现规范中没有提到的额外特性，只要它们遵从 API 要求和在 TCK 中通过测试。</p>
-
 <h2 id="api-components">API Components</h2>
-
 <p>API由以下组件组成，响应式流的实现必须提供它们：</p>
-
 <ol>
 <li><code>Publisher</code> 发布者（生产者）</li>
 <li><code>Subscriber</code>，订阅者（消费者）</li>
 <li><code>Subscription</code> 订阅</li>
-
-<li><p><code>Processor</code> 处理者</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#a6e22e">interface</span> Publisher<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> {
-<span style="color:#66d9ef">public</span> <span style="color:#a6e22e">void</span> subscribe(Subscriber<span style="color:#f92672">&lt;?</span> <span style="color:#66d9ef">super</span> <span style="color:#a6e22e">T</span><span style="color:#f92672">&gt;</span> s);
-}
-
-<span style="color:#66d9ef">public</span> <span style="color:#a6e22e">interface</span> Subscriber<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> {
-<span style="color:#66d9ef">public</span> <span style="color:#a6e22e">void</span> onSubscribe(Subscription <span style="color:#a6e22e">s</span>);
-<span style="color:#66d9ef">public</span> <span style="color:#a6e22e">void</span> onNext(T <span style="color:#a6e22e">t</span>);
-<span style="color:#66d9ef">public</span> <span style="color:#a6e22e">void</span> onError(Throwable <span style="color:#a6e22e">t</span>);
-<span style="color:#66d9ef">public</span> <span style="color:#a6e22e">void</span> onComplete();
-}
-
-<span style="color:#66d9ef">public</span> <span style="color:#a6e22e">interface</span> Subscription {
-<span style="color:#66d9ef">public</span> <span style="color:#a6e22e">void</span> request(<span style="color:#66d9ef">long</span> <span style="color:#a6e22e">n</span>);
-<span style="color:#66d9ef">public</span> <span style="color:#a6e22e">void</span> cancel();
-}
-
-<span style="color:#66d9ef">public</span> <span style="color:#a6e22e">interface</span> Processor<span style="color:#f92672">&lt;</span>T, R<span style="color:#f92672">&gt;</span> <span style="color:#a6e22e">extends</span> Subscriber<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span>, Publisher<span style="color:#f92672">&lt;</span>R<span style="color:#f92672">&gt;</span> {
-}</code></pre></div></li>
+<li><code>Processor</code> 处理者</li>
 </ol>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">Publisher</span><span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> <span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">subscribe</span><span style="color:#f92672">(</span>Subscriber<span style="color:#f92672">&lt;?</span> <span style="color:#66d9ef">super</span> T<span style="color:#f92672">&gt;</span> s<span style="color:#f92672">);</span>
+<span style="color:#f92672">}</span>
 
-<p><strong><em>Publisher</em></strong> 是一个潜在的无限数量的序列元素的一个提供者，按照收到的来自于它的订阅者的需要来发布这些元素。</p>
+<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">Subscriber</span><span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> <span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">onSubscribe</span><span style="color:#f92672">(</span>Subscription s<span style="color:#f92672">);</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">onNext</span><span style="color:#f92672">(</span>T t<span style="color:#f92672">);</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">onError</span><span style="color:#f92672">(</span>Throwable t<span style="color:#f92672">);</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">onComplete</span><span style="color:#f92672">();</span>
+<span style="color:#f92672">}</span>
 
+<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">Subscription</span> <span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">request</span><span style="color:#f92672">(</span><span style="color:#66d9ef">long</span> n<span style="color:#f92672">);</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">cancel</span><span style="color:#f92672">();</span>
+<span style="color:#f92672">}</span>
+
+<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">Processor</span><span style="color:#f92672">&lt;</span>T<span style="color:#f92672">,</span> R<span style="color:#f92672">&gt;</span> <span style="color:#66d9ef">extends</span> Subscriber<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;,</span> Publisher<span style="color:#f92672">&lt;</span>R<span style="color:#f92672">&gt;</span> <span style="color:#f92672">{</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p><em><strong>Publisher</strong></em> 是一个潜在的无限数量的序列元素的一个提供者，按照收到的来自于它的订阅者的需要来发布这些元素。</p>
 <p>对 <code>Publisher.subscribe(Subscriber)</code> 方法调用的响应，对于订阅者上的方法的可能调用顺序按下面的协议给出：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">onSubscribe <span style="color:#f92672">|</span> onNext <span style="color:#f92672">|</span> onError <span style="color:#f92672">|</span> onComplete</code></pre></div>
-<p>这意味着 <code>onSubscribe</code> 方法总是被调用，后面跟着一个可能的无限数量 <code>onNext</code> 方法调用（因为订阅者的请求）。如果失败的话，后跟一个 <code>onError</code> 方法调用，或当没有更多的元素可用时，是一个 <code>onComplete</code> 方法调用，只要这个 <code>Subscription</code>（订阅关系）没有被取消。</p>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">onSubscribe <span style="color:#f92672">|</span> onNext <span style="color:#f92672">|</span> onError <span style="color:#f92672">|</span> onComplete
+</code></pre></div><p>这意味着 <code>onSubscribe</code> 方法总是被调用，后面跟着一个可能的无限数量 <code>onNext</code> 方法调用（因为订阅者的请求）。如果失败的话，后跟一个 <code>onError</code> 方法调用，或当没有更多的元素可用时，是一个 <code>onComplete</code> 方法调用，只要这个 <code>Subscription</code>（订阅关系）没有被取消。</p>
 <h2 id="glossary-术语">Glossary 术语</h2>
-
 <table>
 <thead>
 <tr>
@@ -199,69 +175,57 @@ https://github.com/alex-shpak/hugo-book
 <th>释义</th>
 </tr>
 </thead>
-
 <tbody>
 <tr>
-<td align="center"><code>Signal</code><br />信号</td>
-<td>作为一个名词，指 <code>onSubscribe</code>，<code>onNext</code>，<code>onComplete</code>，<code>onError</code>，<code>request(n)</code>或 <code>cancel</code> 中的一个 <br />作为一个动词，指 calling/invoking 这些方法</td>
+<td align="center"><code>Signal</code><!-- raw HTML omitted -->信号</td>
+<td>作为一个名词，指 <code>onSubscribe</code>，<code>onNext</code>，<code>onComplete</code>，<code>onError</code>，<code>request(n) </code>或 <code>cancel</code> 中的一个 <!-- raw HTML omitted -->作为一个动词，指 calling/invoking 这些方法</td>
 </tr>
-
 <tr>
-<td align="center"><code>Demand</code><br />需求</td>
-<td>作为一个名词，指的是一个订阅者（向发布者）请求的一定数量的元素，它还没有被发布者分发<br />作为一个动词，指的是请求更多元素的行为动作<br />可以看作是<strong>订阅者向发布者发出的需求/动作，想要获取更多的元素，发布者暂时还没有回应</strong></td>
+<td align="center"><code>Demand</code><!-- raw HTML omitted -->需求</td>
+<td>作为一个名词，指的是一个订阅者（向发布者）请求的一定数量的元素，它还没有被发布者分发<!-- raw HTML omitted -->作为一个动词，指的是请求更多元素的行为动作<!-- raw HTML omitted -->可以看作是<strong>订阅者向发布者发出的需求/动作，想要获取更多的元素，发布者暂时还没有回应</strong></td>
 </tr>
-
 <tr>
 <td align="center"><code>Synchronous(ly)</code></td>
 <td>在调用线程上执行，没有新开线程</td>
 </tr>
-
 <tr>
-<td align="center"><code>Return normally</code><br />正常返回</td>
+<td align="center"><code>Return normally</code><!-- raw HTML omitted -->正常返回</td>
 <td>仅返回已声明过的类型的值给调用者。如果想发送一个失败给订阅者，唯一合法的方式是通过 <code>onError</code>回调方法。</td>
 </tr>
-
 <tr>
-<td align="center"><code>Responsivity</code><br />响应度</td>
+<td align="center"><code>Responsivity</code><!-- raw HTML omitted -->响应度</td>
 <td>已准备就绪有能力来做出响应。在这个文档里用来指示不同的组件不应该互相削弱响应的能力</td>
 </tr>
-
 <tr>
-<td align="center"><code>Non-obstructing</code><br />无障碍</td>
+<td align="center"><code>Non-obstructing</code><!-- raw HTML omitted -->无障碍</td>
 <td>描述一个方法的质量（品质），即在调用线程上尽可能快地执行完。这意味着，例如，避免重的计算和其它将拖住调用者线程执行的事情（因为没有新开线程）。</td>
 </tr>
-
 <tr>
-<td align="center"><code>Terminal state</code><br />终止状态</td>
+<td align="center"><code>Terminal state</code><!-- raw HTML omitted -->终止状态</td>
 <td>本义是终止状态。对于一个发布者，指的是当onComplete或者onError已经被调用。对于一个订阅者，指的是当一个onComplete或onError（回调方法）已经收到。</td>
 </tr>
-
 <tr>
-<td align="center"><code>NOP</code><br /></td>
+<td align="center"><code>NOP</code><!-- raw HTML omitted --></td>
 <td>执行对于调用线程来说没有影响，能够安全地被调用任意次</td>
 </tr>
-
 <tr>
 <td align="center"><code>Serial(ly)</code></td>
 <td>本义是外部同步。为了线程安全的目的，协调访问在这个规范里定义的结构之外被实现，使用的技术像但不限于atomics，monitors或locks。</td>
 </tr>
-
 <tr>
 <td align="center"><code>Thread-safe</code></td>
 <td>能够安全地被同步或异步调用，不需要外部的同步来确保程序的正确性</td>
 </tr>
 </tbody>
 </table>
-
 <h2 id="specification">SPECIFICATION</h2>
-
 <h3 id="publisher">Publisher</h3>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#a6e22e">interface</span> Publisher<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> {
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">Publisher</span><span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> <span style="color:#f92672">{</span>
 
-    <span style="color:#66d9ef">public</span> <span style="color:#a6e22e">void</span> subscribe(Subscriber<span style="color:#f92672">&lt;?</span> <span style="color:#66d9ef">super</span> <span style="color:#a6e22e">T</span><span style="color:#f92672">&gt;</span> s);
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">subscribe</span><span style="color:#f92672">(</span>Subscriber<span style="color:#f92672">&lt;?</span> <span style="color:#66d9ef">super</span> T<span style="color:#f92672">&gt;</span> s<span style="color:#f92672">);</span>
 
-}</code></pre></div>
-<ol>
+<span style="color:#f92672">}</span>
+</code></pre></div><ol>
 <li>一个发布者对一个订阅者的onNext调用总次数必须总是小于或等于订阅者的Subscription请求的元素总数</li>
 <li>一个发布者可能调用的onNext次数比要求的少，然后通过调用onComplete或onError来终止Subscription</li>
 <li>给 <code>Subscriber</code> 的 <code>onSubscribe</code>、<code>onNext</code>、<code>onError</code> 和 <code>onComplete</code> 信号必须串行</li>
@@ -274,155 +238,101 @@ https://github.com/alex-shpak/hugo-book
 <li>发布者的subscribe方法可能被调用任意多次，但是每次必须使用一个不同的订阅者</li>
 <li>一个发布者可以支持多个订阅者，并决定每一个订阅是单播或多播。</li>
 </ol>
-
 <h3 id="subscriber">Subscriber</h3>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#a6e22e">interface</span> Subscriber<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> {
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">Subscriber</span><span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> <span style="color:#f92672">{</span>
 
-    <span style="color:#66d9ef">public</span> <span style="color:#a6e22e">void</span> onSubscribe(Subscription <span style="color:#a6e22e">s</span>);
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">onSubscribe</span><span style="color:#f92672">(</span>Subscription s<span style="color:#f92672">);</span>
 
-    <span style="color:#66d9ef">public</span> <span style="color:#a6e22e">void</span> onNext(T <span style="color:#a6e22e">t</span>);
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">onNext</span><span style="color:#f92672">(</span>T t<span style="color:#f92672">);</span>
 
-    <span style="color:#66d9ef">public</span> <span style="color:#a6e22e">void</span> onError(Throwable <span style="color:#a6e22e">t</span>);
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">onError</span><span style="color:#f92672">(</span>Throwable t<span style="color:#f92672">);</span>
 
-    <span style="color:#66d9ef">public</span> <span style="color:#a6e22e">void</span> onComplete();
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">onComplete</span><span style="color:#f92672">();</span>
 
-}</code></pre></div>
-<p>1、一个订阅者必须通过订阅（Subscription）的request(long n)方法声明需求，然后接收onNext调用。</p>
-
+<span style="color:#f92672">}</span>
+</code></pre></div><p>1、一个订阅者必须通过订阅（Subscription）的request(long n)方法声明需求，然后接收onNext调用。</p>
 <p>2、如果一个订阅者怀疑它的调用处理将消极地影响它的发布者的响应度，建议异步地分发它的调用。</p>
-
 <p>3、订阅者的onComplete()和onError(Throwable t)这两个方法里禁止调用订阅或发布者上的任何方法。</p>
-
 <p>4、订阅者的onComplete()和onError(Throwable t)这两个方法在接收到调用后必须认为订阅已经被取消。</p>
-
 <p>5、一个订阅者必须在收到onSubscriber之后调用指定订阅上的cancel()方法取消该订阅，如果它已经有一个活动的订阅。</p>
-
 <p>6、一个订阅者必须调用订阅的cancel()方法，如果这个订阅不再需要的话。</p>
-
 <p>7、一个订阅者必须确保所有对订阅发生的调用都来自于同一个线程或为它们各自提供external synchronization。</p>
-
 <p>8、一个订阅者必须准备好接收一到多个onNext调用，在已经调用过订阅的cancel()方法之后如果还有请求的元素即将发送。订阅的cancel()方法并不保证立即执行底层的清理操作。</p>
-
 <p>9、一个订阅者必须准备好接收一个onComplete调用，不管之前有或没有调用过订阅的request(long n)方法。</p>
-
 <p>10、一个订阅者必须准备好接收一个onError调用，不管之前有或没有调用过订阅的request(long n)方法。</p>
-
 <p>11、一个订阅者必须确保它的所有的方法调用发生在它们各自的处理之前。该订阅者必须小心合适地发布调用到它的处理逻辑。</p>
-
 <p>12、订阅者的onSubscribe方法必须最多被调用一次，对于一个给定的订阅者。</p>
-
 <p>13、对onSubscribe，onNext，onError或onComplete的调用必须return normally，除了当提供的任何参数是null时，这种情况必须向调用者抛出一个java.lang.NullPointerException异常。对于其它情况，对于一个订阅者来说，去通知一个失败的唯一合法的方式是取消它的订阅。在这个规则被违反的情况下，任何与该订阅者关联的订阅必须被认为是取消的，调用者必须激发这个错误条件，以一种对于运行环境来说是足够的方式。</p>
-
 <h3 id="subscription">Subscription</h3>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#a6e22e">interface</span> Subscription {
-    <span style="color:#66d9ef">public</span> <span style="color:#a6e22e">void</span> request(<span style="color:#66d9ef">long</span> <span style="color:#a6e22e">n</span>);
-    <span style="color:#66d9ef">public</span> <span style="color:#a6e22e">void</span> cancel();
-}</code></pre></div>
-<p>1、订阅的request和cancel方法必须在它的订阅者上下文里被调用。</p>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">Subscription</span> <span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">request</span><span style="color:#f92672">(</span><span style="color:#66d9ef">long</span> n<span style="color:#f92672">);</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">cancel</span><span style="color:#f92672">();</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p>1、订阅的request和cancel方法必须在它的订阅者上下文里被调用。</p>
 <p>2、订阅必须允许订阅者在onNext或onComplete方法里同步地调用订阅的request方法。</p>
-
 <p>3、订阅的request方法必须放置一个关于发布者和订阅者间的同步递归调用的上界。</p>
-
 <p>4、订阅的request方法应该尊重它的调用者的响应度，通过以一个适时的方式返回。</p>
-
 <p>5、调用的cancel方法必须尊重它的调用者的响应度，通过以一个适时的方式返回，必须是幂等的和线程安全的。</p>
-
 <p>6、在订阅取消之后，额外的request(long n)调用必须是NOP。</p>
-
 <p>7、在订阅取消之后，额外的cancel()调用必须时NOP。</p>
-
 <p>8、当订阅没有被取消时，request(long n)方法必须注册给定数目的额外元素，这些元素将被生产并分发给各自的订阅者。</p>
-
 <p>9、当订阅没有被取消时，request(long n)必须使用一个java.lang.IllegalArgumentException异常来调用onError，如果参数小于等于0。引起的原因应该解释为不是正数的调用是非法的。</p>
-
 <p>10、当订阅没有被取消，request(long n)可以同步地调用这个（或其它）订阅者上的onNext。</p>
-
 <p>11、当订阅没有被取消，request(long n)可以同步地调用这个（或其它）订阅者上的onComplete或onError。</p>
-
 <p>12、当订阅没有被取消，cancel()必须请求发布者最终停止调用它的订阅者上的方法。这个操作不要求立即影响订阅。</p>
-
 <p>13、当订阅没有被取消，cancel()必须请求发布者最终删除对相关订阅者的任何引用。</p>
-
 <p>14、当订阅没有被取消，调用cancel()可以引起发布者（如果是有状态的）进入关闭状态，如果在此刻没有其它的订阅存在。</p>
-
 <p>15、调用订阅的cancel方法必须是return normally。</p>
-
 <p>16、调用订阅的request方法必须是return normally。</p>
-
 <p>17、一个订阅必须支持无数次地调用request方法，必须支持到2^63 - 1（Long.MAX_VALUE）次。如果一个需求等于或大于2^63 - 1（Long.MAX_VALUE），或许被发布者认为是真正的无界。</p>
-
 <p>一个订阅被一个发布者和一个订阅者共享，目的是为了在它们之间调节数据交换。这也是为什么subscribe()方法并没有返回创建的那个订阅而是返回void的原因。这个订阅只能通过onSubscriber回调方法传给订阅者。</p>
-
 <h3 id="processor">Processor</h3>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#a6e22e">interface</span> Processor<span style="color:#f92672">&lt;</span>T, R<span style="color:#f92672">&gt;</span> <span style="color:#a6e22e">extends</span> Subscriber<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span>, Publisher<span style="color:#f92672">&lt;</span>R<span style="color:#f92672">&gt;</span> {
-}</code></pre></div>
-<p>1、一个处理器表示一个处理阶段，它既是一个订阅者又是一个发布者，必须遵守它们两者的契约。</p>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">Processor</span><span style="color:#f92672">&lt;</span>T<span style="color:#f92672">,</span> R<span style="color:#f92672">&gt;</span> <span style="color:#66d9ef">extends</span> Subscriber<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;,</span> Publisher<span style="color:#f92672">&lt;</span>R<span style="color:#f92672">&gt;</span> <span style="color:#f92672">{</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p>1、一个处理器表示一个处理阶段，它既是一个订阅者又是一个发布者，必须遵守它们两者的契约。</p>
 <p>2、一个处理器可以选择恢复一个onError调用。如果它选择这样做，必须认为订阅被取消，否则必须立即传播onError调用到它的订阅者。</p>
-
 <p>在不被强制时，当最后一个订阅者取消它的订阅时，取消一个处理器的上游订阅是一个好主意，可以让这个取消调用往上游传播。</p>
-
 <h2 id="asynchronous-vs-synchronous-processing">Asynchronous vs Synchronous Processing</h2>
-
 <p>响应式流 API 要求所有的元素处理（onNext调用）或终止调用（onError，onComplete）禁止阻塞发布者。然而，每一个on*（以on开头的方法）处理器可以同步地处理事件，也可以异步地处理。</p>
-
 <p>看下面这个示例：</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">nioSelectorThreadOrigin <span style="color:#a6e22e">map</span>(f) filter(p) consumeTo(toNioSelectorOutput)</code></pre></div>
-<p>它有一个异步的来源和异步的目的地。让我们假设来源和目的地都是 selector 事件循环。</p>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">nioSelectorThreadOrigin <span style="color:#a6e22e">map</span><span style="color:#f92672">(</span>f<span style="color:#f92672">)</span> filter<span style="color:#f92672">(</span>p<span style="color:#f92672">)</span> consumeTo<span style="color:#f92672">(</span>toNioSelectorOutput<span style="color:#f92672">)</span>
+</code></pre></div><p>它有一个异步的来源和异步的目的地。让我们假设来源和目的地都是 selector 事件循环。</p>
 <p>Subscription.request(n) 必须是一个链接从目的地到来源。这就是现在每一个实现都能选择如何做这些的地方。</p>
-
 <p>下面使用管道操作符（|）来调用异步边界（队列和调度器），R#表示资源（可能是线程）。</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">nioSelectorThreadOrigin | map<span style="color:#f92672">(</span>f<span style="color:#f92672">)</span> | filter<span style="color:#f92672">(</span>p<span style="color:#f92672">)</span> | consumeTo<span style="color:#f92672">(</span>toNioSelectorOutput<span style="color:#f92672">)</span>
--------------- R1 ----  | - R2 - | -- R3 --- | ---------- R4 ----------------</code></pre></div>
-<p>在这个示例中，这3个消费者中的每一个，map，filter和consumeTo异步地调度work。它们可能在同一个事件循环上，也可能是分离的线程。</p>
-
+-------------- R1 ----  | - R2 - | -- R3 --- | ---------- R4 ----------------
+</code></pre></div><p>在这个示例中，这3个消费者中的每一个，map，filter和consumeTo异步地调度work。它们可能在同一个事件循环上，也可能是分离的线程。</p>
 <p>看下面这个示例</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">nioSelectorThreadOrigin map<span style="color:#f92672">(</span>f<span style="color:#f92672">)</span> filter<span style="color:#f92672">(</span>p<span style="color:#f92672">)</span> | consumeTo<span style="color:#f92672">(</span>toNioSelectorOutput<span style="color:#f92672">)</span>
-------------------- R1 ----------------- | ---------- R2 ----------------</code></pre></div>
-<p>这里只有最后一步是异步地调度，通过把work添加到NioSelectorOutput事件循环。map和filter步骤都在来源线程上同步地执行。</p>
-
+------------------- R1 ----------------- | ---------- R2 ----------------
+</code></pre></div><p>这里只有最后一步是异步地调度，通过把work添加到NioSelectorOutput事件循环。map和filter步骤都在来源线程上同步地执行。</p>
 <p>或者另一种实现把这些操作都安装到最终消费者那里：</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">nioSelectorThreadOrigin | map<span style="color:#f92672">(</span>f<span style="color:#f92672">)</span> filter<span style="color:#f92672">(</span>p<span style="color:#f92672">)</span> consumeTo<span style="color:#f92672">(</span>toNioSelectorOutput<span style="color:#f92672">)</span>
---------- R1 ---------- | ------------------ R2 -------------------------</code></pre></div>
-<p>所有这些变体都是“异步流”。它们都有自己的位置，每一个有不同的权衡包括性能和实现复杂度。</p>
-
+--------- R1 ---------- | ------------------ R2 -------------------------
+</code></pre></div><p>所有这些变体都是“异步流”。它们都有自己的位置，每一个有不同的权衡包括性能和实现复杂度。</p>
 <p>响应式流允许实现灵活性来管理资源和调度，混合异步和同步处理，在一个非阻塞，异步，动态的推拉式流的限制内。</p>
-
 <p>为了允许所有参与API元素（Publisher/Subscription/Subscriber/Processor）的完全的异步实现，这些接口定义的所有方法都返回void。</p>
-
 <h2 id="subscriber-controlled-queue-bounds">Subscriber controlled queue bounds</h2>
-
 <p>其中一个底层设计原则是，所有缓冲区大小都是有界的，这些界限必须是知道的，且由订阅者控制。这些界限用元素数目（它依次转化为 onNext 的调用次数）这样的术语来表达。任何实现的目标都是为了支持无限流（尤其是高输出速率流），一般需要强迫界限都沿着避免 OOM 错误和限制资源使用的方式。</p>
-
 <p>因为后压是强制的，使用无界缓冲区能够被避免。一般来说，只有在当一个队列可能无界增长时，此时也是发布者端比订阅者端保持一个更高的速率，且持续了一段较大的时间，但是这种情形是被后压来处理的。</p>
-
 <p>队列界限能够被控制通过一个订阅者为了适合数目的元素而调用需求。在任何时候订阅者都知道：</p>
-
 <ul>
 <li>请求的总元素数目：P</li>
 <li>已经处理的元素数目：N</li>
 </ul>
-
 <p>然后最大数量的元素可能达到是P - N，直到更多的需求被发送通知给发布者。这种情况下，订阅者也知道在它的输入缓冲区里的元素数目B，然后这个界限可以被重新精确为P - B - N。</p>
-
 <p>这些界限必须被一个发布者尊重，独立于无论它表示的源是能够被后压的或不能。在这种源的生产速率不能被影响的情形下，例如钟表的滴滴答答或鼠标的移动，发布者必须选择要么缓冲元素或抛弃元素来遵守这个强加的界限。</p>
-
 <p>订阅者在接收一个元素后发一个请求获取另一个元素，可以有效地实现一个停止和等待协议，这里这个需求信号和一个ACK（回应）相等。通过提需求的方式获取多个元素，ACK花销是分期偿还的。</p>
-
 <p>这是值的注意的，订阅者被允许在任何时间点发信号提出需求，允许它是为了避免发布者和订阅者之间不必要的延迟（例如，保持它的输入缓冲区是满的，不需要等待完整的往返时间）。</p>
-
 <h2 id="相关资源">相关资源</h2>
-
 <ul>
 <li>官方资料
-
 <ul>
-<li>官网：<a href="http://www.reactive-streams.org/">http://www.reactive-streams.org/</a></li>
-<li>引导：<a href="http://www.reactive-streams.org/announce-1.0.3">http://www.reactive-streams.org/announce-1.0.3</a></li>
-<li>javadoc：<a href="http://www.reactive-streams.org/reactive-streams-1.0.3-javadoc/org/reactivestreams/package-summary.html">http://www.reactive-streams.org/reactive-streams-1.0.3-javadoc/org/reactivestreams/package-summary.html</a></li>
-</ul></li>
+<li>官网：http://www.reactive-streams.org/</li>
+<li>引导：http://www.reactive-streams.org/announce-1.0.3</li>
+<li>javadoc：http://www.reactive-streams.org/reactive-streams-1.0.3-javadoc/org/reactivestreams/package-summary.html</li>
+</ul>
+</li>
 </ul>
 </article>
 
@@ -454,24 +364,22 @@ https://github.com/alex-shpak/hugo-book
 
   <aside class="book-toc level-3 fixed">
     <nav id="TableOfContents">
-<ul>
-<li><a href="#reactive-streams-规范">Reactive Streams 规范</a>
-<ul>
-<li><a href="#goals-design-and-scope">Goals, Design and Scope</a></li>
-<li><a href="#api-components">API Components</a></li>
-<li><a href="#glossary-术语">Glossary 术语</a></li>
-<li><a href="#specification">SPECIFICATION</a>
-<ul>
-<li><a href="#publisher">Publisher</a></li>
-<li><a href="#subscriber">Subscriber</a></li>
-<li><a href="#subscription">Subscription</a></li>
-<li><a href="#processor">Processor</a></li>
-</ul></li>
-<li><a href="#asynchronous-vs-synchronous-processing">Asynchronous vs Synchronous Processing</a></li>
-<li><a href="#subscriber-controlled-queue-bounds">Subscriber controlled queue bounds</a></li>
-<li><a href="#相关资源">相关资源</a></li>
-</ul></li>
-</ul>
+  <ul>
+    <li><a href="#goals-design-and-scope">Goals, Design and Scope</a></li>
+    <li><a href="#api-components">API Components</a></li>
+    <li><a href="#glossary-术语">Glossary 术语</a></li>
+    <li><a href="#specification">SPECIFICATION</a>
+      <ul>
+        <li><a href="#publisher">Publisher</a></li>
+        <li><a href="#subscriber">Subscriber</a></li>
+        <li><a href="#subscription">Subscription</a></li>
+        <li><a href="#processor">Processor</a></li>
+      </ul>
+    </li>
+    <li><a href="#asynchronous-vs-synchronous-processing">Asynchronous vs Synchronous Processing</a></li>
+    <li><a href="#subscriber-controlled-queue-bounds">Subscriber controlled queue bounds</a></li>
+    <li><a href="#相关资源">相关资源</a></li>
+  </ul>
 </nav>
   </aside>
 

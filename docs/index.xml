@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Introduction on Reactor</title>
@@ -15,7 +15,7 @@
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://hello-world-example.github.io/Reactor/_sidebar/</guid>
-      <description> 傻傻分不清 Reactive Streams 规范 CompletableFuture Reactor  操作符 线程调度  Action  窗口批量操作   </description>
+      <description> 傻傻分不清 Reactive Streams 规范 CompletableFuture Reactor  操作符 线程调度   Action  窗口批量操作    </description>
     </item>
     
     <item>
@@ -24,7 +24,7 @@
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://hello-world-example.github.io/Reactor/docs/Action/Window-Batch/</guid>
-      <description>窗口批量操作 适用场景  缓存指定时间 或 指定量的数据，批量持久化 对最近一段时间的数据进行统计，然后持久化  相关 Flux API  window(Duration windowingTimespan) window(int maxSize) windowTimeout(int maxSize, Duration maxTime) windowUntilChanged() windowWhile(Predicate&amp;lt;T&amp;gt; inclusionPredicate)  代码示例 public class BatchOperateDemo&amp;lt;T&amp;gt; { private BlockingQueue&amp;lt;T&amp;gt; queue = new LinkedBlockingQueue&amp;lt;&amp;gt;(); /** * 数据来源（从队列中拿） */ private Consumer&amp;lt;SynchronousSink&amp;lt;T&amp;gt;&amp;gt; provider = sink -&amp;gt; { try { sink.next(queue.take()); } catch (InterruptedException e) { e.printStackTrace(); } }; /** * 投喂数据 */ public void feed(final T data) throws InterruptedException { queue.</description>
+      <description>窗口批量操作 适用场景  缓存指定时间 或 指定量的数据，批量持久化 对最近一段时间的数据进行统计，然后持久化  相关 Flux API  window(Duration windowingTimespan) window(int maxSize) windowTimeout(int maxSize, Duration maxTime) windowUntilChanged() windowWhile(Predicate&amp;lt;T&amp;gt; inclusionPredicate)  代码示例 public class BatchOperateDemo&amp;lt;T&amp;gt; { private BlockingQueue&amp;lt;T&amp;gt; queue = new LinkedBlockingQueue&amp;lt;&amp;gt;(); /** * 数据来源（从队列中拿） */ private Consumer&amp;lt;SynchronousSink&amp;lt;T&amp;gt;&amp;gt; provider = sink -&amp;gt; { try { sink.next(queue.take()); } catch (InterruptedException e) { e.printStackTrace(); } }; /** * 投喂数据 */ public void feed(final T data) throws InterruptedException { queue.put(data); } /** * 打印指定窗口 数据量 */ private Consumer&amp;lt;Flux&amp;lt;T&amp;gt;&amp;gt; countConsumer() { return (Flux&amp;lt;T&amp;gt; data) -&amp;gt; data.</description>
     </item>
     
     <item>
@@ -42,13 +42,13 @@
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://hello-world-example.github.io/Reactor/docs/Diff/</guid>
-      <description> 傻傻分不清 概念  React： Facebook 开源的前端开发框架，与响应式编程没有关系，与后端没有关系
- Reactive：响应式的； 大多数场景里用来描述响应式编程（Reactive Programming）
- Reactive Streams： 响应式编程规范 http://www.reactive-streams.org/ ，已纳入JDK9
- Reactor： 响应式编程的一种实现，Spring5 采用，遵循Reactive Streams规范
- RxJava：响应式编程的一种实现，Android 采用较多，遵循Reactive Streams规范
- ReactiveX：简称 Rx，是一个编程模型，也是一个组织（http://reactivex.io/），下面有 RxJava/RxJS/Rx.NET 等项目
-  对比  八个层面比较 Java 8, RxJava, Reactor Netflix RxJava vs Spring Reactor  Use Reactor 3 if you are allowed to use Java 8+ use RxJava 2 if you are stuck on Java 6+ or need your functions to throw checked exceptions  RxJava vs Reactor  </description>
+      <description>傻傻分不清 概念   React： Facebook 开源的前端开发框架，与响应式编程没有关系，与后端没有关系
+  Reactive：响应式的； 大多数场景里用来描述响应式编程（Reactive Programming）
+  Reactive Streams： 响应式编程规范 http://www.reactive-streams.org/ ，已纳入JDK9
+  Reactor： 响应式编程的一种实现，Spring5 采用，遵循Reactive Streams规范
+  RxJava：响应式编程的一种实现，Android 采用较多，遵循Reactive Streams规范
+  ReactiveX：简称 Rx，是一个编程模型，也是一个组织（http://reactivex.io/），下面有 RxJava/RxJS/Rx.NET 等项目
+  对比  八个层面比较 Java 8, RxJava, Reactor Netflix RxJava vs Spring Reactor  Use Reactor 3 if you are allowed to use Java 8+ use RxJava 2 if you are stuck on Java 6+ or need your functions to throw checked exceptions   RxJava vs Reactor  </description>
     </item>
     
     <item>
@@ -79,7 +79,7 @@
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://hello-world-example.github.io/Reactor/docs/Reactor/Schedulers/</guid>
-      <description> 线程调度  reactor.core.scheduler.Schedulers API 文档
+      <description>线程调度  reactor.core.scheduler.Schedulers API 文档
   Schedulers.immediate() - 使用当前线程 Schedulers.elastic() - 使用线程池 Schedulers.single() - 单个线程 Schedulers.parallel() - 使用并行处理的线程池（取决于CPU核数) Schedulers.fromExecutorService(Executors.newScheduledThreadPool(5)) - 使用Executor（这个最灵活)  </description>
     </item>
     
